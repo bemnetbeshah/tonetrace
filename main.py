@@ -1,6 +1,8 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
 from textblob import TextBlob
+from analyzers.passive_voice import detect_passive_sentences
+
 
 
 app = FastAPI()
@@ -17,8 +19,13 @@ def analyze_text(input_data: textInput):
     blob = TextBlob(input_data.text)
     polarity = blob.sentiment.polarity
     subjectivity = blob.sentiment.subjectivity
+
+    passive_analysis = detect_passive_sentences(input_data.text)
+
     return {
-        "polarity": polarity,
-        "subjectivity": subjectivity,
-        "text": input_data.text
+        "sentiment": {
+            "polarity": polarity,
+            "subjectivity": subjectivity,
+        },
+        "passive_analysis": passive_analysis
     }
