@@ -1,5 +1,7 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
+from textblob import TextBlob
+
 
 app = FastAPI()
 
@@ -12,5 +14,11 @@ class textInput(BaseModel):
 
 @app.post("/analyze")
 def analyze_text(input_data: textInput):
-    return {"message": "Text received", "input_length": len(input_data.text)}
-
+    blob = TextBlob(input_data.text)
+    polarity = blob.sentiment.polarity
+    subjectivity = blob.sentiment.subjectivity
+    return {
+        "polarity": polarity,
+        "subjectivity": subjectivity,
+        "text": input_data.text
+    }
