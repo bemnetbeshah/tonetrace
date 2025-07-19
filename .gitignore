@@ -1,2 +1,45 @@
+# === Python ===
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+
+# === Virtual Environment ===
 .venv/
+venv/
+ENV/
+env/
+*.env
+
+# === VS Code ===
 .vscode/
+
+# === OS Files ===
+.DS_Store
+Thumbs.db
+
+# === Logs ===
+*.log
+
+# === Test Coverage ===
+htmlcov/
+.coverage
+coverage.xml
+.cache
+
+# === Pytest ===
+.pytest_cache/
+
+# === MyPy ===
+.mypy_cache/
+.dmypy.json
+
+# === FastAPI auto-reloads ===
+*.db
+*.sqlite3
+
+# === Pipenv / Poetry (if used later) ===
+Pipfile
+Pipfile.lock
+poetry.lock
