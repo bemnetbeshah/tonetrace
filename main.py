@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
 from textblob import TextBlob
+from analyzers.sentiment import analyze_sentiment
 from analyzers.passive_voice import detect_passive_sentences
 
 
