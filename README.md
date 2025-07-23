@@ -4,6 +4,7 @@
 
 ---
 
+
 ## 🚀 Features
 
 - ✍️ Upload or paste writing samples
@@ -11,6 +12,50 @@
 - 🎯 Generate writing prompts or new content in your own tone
 - 📊 Track changes in tone over time (upcoming versions)
 - 🛠️ RESTful API with interactive docs (Swagger UI)
+
+---
+
+## 🔧 New Modules & Features
+
+- **Created `analyzers/style_metrics.py`**
+  - `compute_formality()`: Returns a formality bucket and underlying readability scores:
+    - `flesch_kincaid_grade`
+    - `gunning_fog_index`
+    - `dale_chall_score`
+  - `compute_complexity()`: Returns
+    - `average_sentence_length` (via textstat)
+    - `lexical_density` (via spaCy)
+  - Loads spaCy model globally (`nlp = spacy.load("en_core_web_sm")`)
+
+---
+
+## 🔁 Route Refactor
+
+- Moved logic into `routes/analyze.py`
+- Created a clean `APIRouter`
+- Defined `AnalyzeRequest` model
+- Added `/analyze` route using `async def`
+- Integrated analyzers:
+  - `compute_formality`
+  - `compute_complexity`
+  - `classify_tone`
+  - `analyze_sentiment`
+  - `detect_passive_sentences`
+- Updated `main.py`:
+  - Imported and included the router:
+    ```python
+    from routes.analyze import router as analyze_router
+    app.include_router(analyze_router)
+    ```
+
+---
+
+## 🧪 Testing
+
+- Wrote and ran a custom test script (`tests/test_analyze_api.py`)
+- Sent a POST request to `/analyze`
+- Validated the output
+- Confirmed everything worked as expected
 
 ---
 

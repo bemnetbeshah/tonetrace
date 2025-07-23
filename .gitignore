@@ -43,3 +43,6 @@ coverage.xml
 Pipfile
 Pipfile.lock
 poetry.lock
+
+# === Scripts for testing ===
+temp_script.py
