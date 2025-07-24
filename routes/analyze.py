@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 from pydantic import BaseModel
 from analyzers.style_metrics import compute_formality, compute_complexity
-from analyzers.tone import classify_tone
+from analyzers.tone import classify_tone_model
 from analyzers.sentiment import analyze_sentiment
 from analyzers.passive_voice import detect_passive_sentences
 
@@ -16,7 +16,7 @@ async def analyze_text(payload: AnalyzeRequest):
 
     formality_result = compute_formality(text)
     complexity_result = compute_complexity(text)
-    tone_result = classify_tone(text)
+    tone_result = classify_tone_model(text)
     sentiment_result = analyze_sentiment(text)
     passive_analysis = detect_passive_sentences(text)
 
