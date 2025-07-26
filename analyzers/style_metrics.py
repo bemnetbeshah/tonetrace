@@ -25,30 +25,19 @@ import spacy
 def compute_formality(text: str) -> dict:
     """
     Analyze formality using multiple readability formulas.
-    Returns a bucket and 3 underlying scores.
+    Returns normalized output with score, bucket, and raw metrics.
 
     Metrics:
     - Flesch-Kincaid Grade: Estimates US school grade level needed to understand the text.
     - Gunning Fog Index: Estimates years of formal education needed to understand the text on first reading.
     - Dale-Chall Readability Score: Uses a list of common words to determine text difficulty.
-
-    Dale-Chall Score Reference:
-        Score: 0 - 4.9   | Grade: K-4   | Beginner/Early elementary
-        Score: 5.0 - 5.9 | Grade: 5     | Elementary
-        Score: 6.0 - 6.9 | Grade: 6     | Elementary
-        Score: 7.0 - 7.9 | Grade: 7     | Junior high/middle school
-        Score: 8.0 - 8.9 | Grade: 8     | Junior high/middle school
-        Score: 9.0 - 9.9 | Grade: 9     | High school
-        Score: 10.0-10.9 | Grade: 10    | High school
-        Score: 11.0-11.9 | Grade: 11    | High school
-        Score: 12.0-12.9 | Grade: 12    | High school
-        Score: 13.0+     | College+     | College/Advanced
     """
 
     fk_grade = textstat.flesch_kincaid_grade(text)
     fog_index = textstat.gunning_fog(text)
     dale_score = textstat.dale_chall_readability_score(text)
 
+    # Determine formality bucket based on Flesch-Kincaid grade
     if fk_grade < 6:
         bucket = "informal"
     elif fk_grade < 10:
@@ -56,11 +45,17 @@ def compute_formality(text: str) -> dict:
     else:
         bucket = "formal"
 
+    # Normalize score to 0-1 range (cap at grade 20 for normalization)
+    normalized_score = min(fk_grade / 20.0, 1.0)
+
     return {
+        "score": round(normalized_score, 3),
         "bucket": bucket,
-        "flesch_kincaid_grade": round(fk_grade, 2),
-        "gunning_fog_index": round(fog_index, 2),
-        "dale_chall_score": round(dale_score, 2)
+        "raw_metrics": {
+            "flesch_kincaid_grade": round(fk_grade, 2),
+            "gunning_fog_index": round(fog_index, 2),
+            "dale_chall_score": round(dale_score, 2)
+        }
     }
 
 # Load the English NLP model
@@ -68,9 +63,8 @@ nlp = spacy.load("en_core_web_sm")
 
 def compute_complexity(text: str) -> dict:
     """
-    Computes writing complexity metrics:
-    - Average sentence length (words per sentence)
-    - Lexical density (content words / total words)
+    Computes writing complexity metrics.
+    Returns normalized output with score, bucket, and raw metrics.
     """
     doc = nlp(text)
 
@@ -89,7 +83,21 @@ def compute_complexity(text: str) -> dict:
     word_count = textstat.lexicon_count(text, removepunct=True)
     avg_sentence_length = round(word_count / sentence_count, 2) if sentence_count > 0 else 0
 
+    # Determine complexity bucket based on sentence length and lexical density
+    complexity_score = (min(avg_sentence_length / 25.0, 1.0) + lexical_density) / 2.0
+    
+    if complexity_score < 0.3:
+        bucket = "simple"
+    elif complexity_score < 0.7:
+        bucket = "moderate"
+    else:
+        bucket = "complex"
+
     return {
-        "average_sentence_length": avg_sentence_length,
-        "lexical_density": lexical_density
+        "score": round(complexity_score, 3),
+        "bucket": bucket,
+        "raw_metrics": {
+            "average_sentence_length": avg_sentence_length,
+            "lexical_density": lexical_density
+        }
     }

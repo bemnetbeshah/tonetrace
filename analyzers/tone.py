@@ -12,7 +12,7 @@ def map_emotion_to_tone(label: str) -> str:
 def classify_tone_model(text: str, threshold: float = 0.4, score_diff: float = 0.05) -> dict:
     """
     Classifies the tone of the given text based on emotion scores.
-    Includes support for the top two emotions if their scores are close.
+    Returns normalized output with score, bucket, and raw emotions.
     """
     raw_scores = emotion_classifier(text)[0]
     emotions = [
@@ -23,10 +23,18 @@ def classify_tone_model(text: str, threshold: float = 0.4, score_diff: float = 0
     # Sort emotions by score in descending order
     sorted_emotions = sorted(emotions, key=lambda x: x["score"], reverse=True)
 
+    if not sorted_emotions:
+        return {
+            "score": 0.0,
+            "bucket": "neutral",
+            "raw_emotions": []
+        }
+
     # Get the top emotion
     top_emotion = sorted_emotions[0]
     top_label = top_emotion["label"]
     mapped_tone = map_emotion_to_tone(top_label)
+    confidence_score = top_emotion["score"]
 
     # Check if the second emotion is close in score to the top emotion
     if len(sorted_emotions) > 1:
@@ -34,14 +42,14 @@ def classify_tone_model(text: str, threshold: float = 0.4, score_diff: float = 0
         if abs(top_emotion["score"] - second_emotion["score"]) <= score_diff:
             second_label = second_emotion["label"]
             second_tone = map_emotion_to_tone(second_label)
-            return {
-                "tone": f"{mapped_tone} / {second_tone}",
-                "emotions": emotions
-            }
+            bucket = f"{mapped_tone} / {second_tone}"
+        else:
+            bucket = mapped_tone
+    else:
+        bucket = mapped_tone
 
-    # Return only the top tone if no close second emotion
     return {
-        "tone": mapped_tone,
-        "emotions": emotions
+        "score": round(confidence_score, 3),
+        "bucket": bucket,
+        "raw_emotions": emotions
     }
-
