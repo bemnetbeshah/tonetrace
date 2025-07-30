@@ -1,33 +1,32 @@
 # ✨ ToneTrace
 
-**ToneTrace** is an AI-powered educational tool designed to revolutionize writing assessment and learning support. Built with **FastAPI**, it provides stylometric fingerprinting, tone analysis, and progress tracking to support fair and data-driven writing assessment while paving the way for more accessible, high-quality education worldwide.
+**ToneTrace** is an AI-powered educational tool designed to revolutionize writing assessment and language learning. By providing teachers with sophisticated writing analysis capabilities, ToneTrace aims to increase education quality, make learning more accessible in underserved areas, and enhance language acquisition efficiency.
 
 ---
 
-## 🌍 Educational Vision
+## 🎯 Educational Mission
 
-ToneTrace is more than just a writing analysis tool—it's a step toward democratizing quality education globally. Our mission is to:
+ToneTrace is built with a clear educational mission: **to democratize high-quality writing assessment and language learning support**. Our vision extends beyond individual classrooms to address global educational challenges:
 
-### 🎯 **Increase Education Quality**
-- Provide teachers with data-driven insights to make more informed assessment decisions
-- Enable personalized feedback that adapts to each student's unique writing style
-- Support evidence-based teaching practices through comprehensive writing analytics
+### 🌍 **Global Educational Impact**
+- **Quality Enhancement**: Provide sophisticated writing analysis tools to educators worldwide
+- **Accessibility**: Support learning in regions with limited teaching resources
+- **Language Learning**: Accelerate language acquisition through personalized writing feedback
+- **Scalability**: Enable one teacher to effectively support many more students
 
-### 🌐 **Make Education More Widespread**
-- Scale educational support in regions with limited teacher resources
-- Provide consistent, high-quality writing assessment regardless of geographic location
-- Enable remote and hybrid learning environments with reliable evaluation tools
-
-### 🗣️ **Aid Language Learning Efficiency**
-- Support multilingual education through future language expansion capabilities
-- Help language learners track their writing progress across different languages
-- Provide consistent assessment standards for non-native speakers
+### 🎓 **Future Vision**
+ToneTrace aims to become a comprehensive educational platform that:
+- **Supports Multiple Languages**: Breaking down language barriers in education
+- **Scales to Underserved Areas**: Where teacher-to-student ratios are challenging
+- **Enhances Language Learning**: Through AI-powered writing style analysis and feedback
+- **Improves Educational Outcomes**: By providing data-driven insights for personalized learning
 
 ---
 
-## 🎯 Purpose
+## 🚀 Current Purpose
 
-ToneTrace solves two key problems for educators:
+ToneTrace solves two immediate problems for educators while building toward our broader educational mission:
+
 1. **"Is my student using AI to write this?"** - Detects potential AI usage through style drift analysis
 2. **"Is my student actually improving over time?"** - Tracks writing progress with measurable metrics
 
@@ -196,6 +195,8 @@ This project is focused on educational technology and responsible AI. Contributi
 - Educational fairness
 - Data privacy
 - Accessibility
+- **Multilingual support**
+- **Resource efficiency for underserved areas**
 
 are especially welcome. Please open issues or submit pull requests.
 
@@ -207,21 +208,29 @@ MIT License
 
 ---
 
-## 🎓 Educational Impact
+## 🎓 Educational Impact & Future Vision
 
-ToneTrace aims to support educators in:
+### **Current Impact**
+ToneTrace supports educators in:
 - **Fair Assessment**: Data-driven writing evaluation
 - **Student Growth**: Trackable progress over time
 - **AI Literacy**: Understanding AI's role in writing
 - **Resource Efficiency**: Scalable solutions for large classes
-- **Global Accessibility**: Future multilingual support
 
-### 🌟 Long-Term Educational Goals
+### **Future Educational Goals**
+Our roadmap includes:
+- **🌍 Multilingual Support**: Breaking language barriers in education
+- **📚 Language Learning Enhancement**: AI-powered writing style analysis for language acquisition
+- **🏫 Institutional Scaling**: School-wide dashboards and analytics
+- **🌐 Global Accessibility**: Offline/low-resource support for underserved regions
+- **🎯 Personalized Learning**: AI-generated writing feedback in students' own style
+- **📊 Educational Research**: Data insights for improving teaching methodologies
 
-**Quality Enhancement**: Transform writing assessment from subjective evaluation to objective, data-driven insights that help teachers provide more effective feedback and support.
+### **Long-term Vision**
+ToneTrace aims to become a cornerstone of modern education technology, helping to:
+- **Increase Education Quality**: Through sophisticated, personalized writing analysis
+- **Expand Educational Access**: Supporting teachers in regions with limited resources
+- **Accelerate Language Learning**: Making language acquisition more efficient and effective
+- **Democratize Writing Assessment**: Providing high-quality tools to educators worldwide
 
-**Accessibility Expansion**: Bridge educational gaps in underserved regions by providing consistent, high-quality writing assessment tools that can scale with limited teacher resources.
-
-**Language Learning Support**: Enable more efficient language acquisition through consistent writing assessment standards and progress tracking across multiple languages.
-
-**Educational Equity**: Ensure that students everywhere have access to the same quality of writing assessment and feedback, regardless of their geographic location or available resources.
+By building on our current AI-powered analysis foundation, we're creating a platform that can scale to serve millions of students and teachers, ultimately contributing to better educational outcomes globally.
