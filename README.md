@@ -1,6 +1,27 @@
 # ✨ ToneTrace
 
-**ToneTrace** is an AI-powered educational tool that helps teachers analyze student writing samples to detect AI usage and track writing improvement over time. Built with **FastAPI**, it provides stylometric fingerprinting, tone analysis, and progress tracking to support fair and data-driven writing assessment.
+**ToneTrace** is an AI-powered educational tool designed to revolutionize writing assessment and learning support. Built with **FastAPI**, it provides stylometric fingerprinting, tone analysis, and progress tracking to support fair and data-driven writing assessment while paving the way for more accessible, high-quality education worldwide.
+
+---
+
+## 🌍 Educational Vision
+
+ToneTrace is more than just a writing analysis tool—it's a step toward democratizing quality education globally. Our mission is to:
+
+### 🎯 **Increase Education Quality**
+- Provide teachers with data-driven insights to make more informed assessment decisions
+- Enable personalized feedback that adapts to each student's unique writing style
+- Support evidence-based teaching practices through comprehensive writing analytics
+
+### 🌐 **Make Education More Widespread**
+- Scale educational support in regions with limited teacher resources
+- Provide consistent, high-quality writing assessment regardless of geographic location
+- Enable remote and hybrid learning environments with reliable evaluation tools
+
+### 🗣️ **Aid Language Learning Efficiency**
+- Support multilingual education through future language expansion capabilities
+- Help language learners track their writing progress across different languages
+- Provide consistent assessment standards for non-native speakers
 
 ---
 
@@ -194,3 +215,13 @@ ToneTrace aims to support educators in:
 - **AI Literacy**: Understanding AI's role in writing
 - **Resource Efficiency**: Scalable solutions for large classes
 - **Global Accessibility**: Future multilingual support
+
+### 🌟 Long-Term Educational Goals
+
+**Quality Enhancement**: Transform writing assessment from subjective evaluation to objective, data-driven insights that help teachers provide more effective feedback and support.
+
+**Accessibility Expansion**: Bridge educational gaps in underserved regions by providing consistent, high-quality writing assessment tools that can scale with limited teacher resources.
+
+**Language Learning Support**: Enable more efficient language acquisition through consistent writing assessment standards and progress tracking across multiple languages.
+
+**Educational Equity**: Ensure that students everywhere have access to the same quality of writing assessment and feedback, regardless of their geographic location or available resources.
