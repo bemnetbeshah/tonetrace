@@ -2,6 +2,8 @@
 This module provides functions to calculate style-related metrics for a given text.
 """
 
+from . import create_standard_response
+
 def count_words(text: str) -> int:
     """
     Counts the number of words in the input text.
@@ -19,13 +21,14 @@ def average_sentence_length(text: str) -> float:
         return 0.0
     # Calculate the average number of words per sentence
     return sum(len(sentence.split()) for sentence in sentences) / len(sentences)
+
 import textstat
 import spacy
 
 def compute_formality(text: str) -> dict:
     """
     Analyze formality using multiple readability formulas.
-    Returns a bucket and 3 underlying scores.
+    Returns a standardized response with score, bucket, raw_emotions, confidence, and details.
 
     Metrics:
     - Flesch-Kincaid Grade: Estimates US school grade level needed to understand the text.
@@ -49,28 +52,51 @@ def compute_formality(text: str) -> dict:
     fog_index = textstat.gunning_fog(text)
     dale_score = textstat.dale_chall_readability_score(text)
 
+    # Determine formality bucket
     if fk_grade < 6:
         bucket = "informal"
+        score = 0.3  # Low formality score
     elif fk_grade < 10:
         bucket = "neutral"
+        score = 0.6  # Medium formality score
     else:
         bucket = "formal"
+        score = 0.9  # High formality score
 
-    return {
-        "bucket": bucket,
+    # Calculate confidence based on consistency of metrics
+    confidence = 0.8  # Base confidence for readability metrics
+    
+    # Create raw emotions breakdown (using readability scores as "emotions")
+    raw_emotions = [
+        {"label": "flesch_kincaid_grade", "score": round(fk_grade, 2)},
+        {"label": "gunning_fog_index", "score": round(fog_index, 2)},
+        {"label": "dale_chall_score", "score": round(dale_score, 2)}
+    ]
+    
+    # Create details with additional metrics
+    details = {
         "flesch_kincaid_grade": round(fk_grade, 2),
         "gunning_fog_index": round(fog_index, 2),
-        "dale_chall_score": round(dale_score, 2)
+        "dale_chall_score": round(dale_score, 2),
+        "grade_level": fk_grade,
+        "education_level": "beginner" if fk_grade < 6 else "intermediate" if fk_grade < 10 else "advanced"
     }
+
+    return create_standard_response(
+        score=score,
+        bucket=bucket,
+        raw_emotions=raw_emotions,
+        confidence=confidence,
+        details=details
+    )
 
 # Load the English NLP model
 nlp = spacy.load("en_core_web_sm")
 
 def compute_complexity(text: str) -> dict:
     """
-    Computes writing complexity metrics:
-    - Average sentence length (words per sentence)
-    - Lexical density (content words / total words)
+    Computes writing complexity metrics.
+    Returns a standardized response with score, bucket, raw_emotions, confidence, and details.
     """
     doc = nlp(text)
 
@@ -83,13 +109,49 @@ def compute_complexity(text: str) -> dict:
             if token.pos_ in {"NOUN", "VERB", "ADJ", "ADV"}:
                 content_words += 1
 
-    lexical_density = round(content_words / total_words, 2) if total_words > 0 else 0
+    lexical_density = round(content_words / total_words, 3) if total_words > 0 else 0
 
     sentence_count = textstat.sentence_count(text)
     word_count = textstat.lexicon_count(text, removepunct=True)
     avg_sentence_length = round(word_count / sentence_count, 2) if sentence_count > 0 else 0
 
-    return {
+    # Determine complexity bucket based on lexical density and sentence length
+    if lexical_density > 0.6 and avg_sentence_length > 20:
+        bucket = "complex"
+        score = 0.9
+    elif lexical_density > 0.5 or avg_sentence_length > 15:
+        bucket = "moderate"
+        score = 0.6
+    else:
+        bucket = "simple"
+        score = 0.3
+
+    # Calculate confidence based on text length
+    confidence = min(1.0, total_words / 50)  # Higher confidence with more text
+    
+    # Create raw emotions breakdown
+    raw_emotions = [
+        {"label": "lexical_density", "score": lexical_density},
+        {"label": "avg_sentence_length", "score": avg_sentence_length / 30}  # Normalize to 0-1 range
+    ]
+    
+    # Create details with additional metrics
+    details = {
         "average_sentence_length": avg_sentence_length,
-        "lexical_density": lexical_density
+        "lexical_density": lexical_density,
+        "total_words": total_words,
+        "content_words": content_words,
+        "sentence_count": sentence_count,
+        "complexity_factors": {
+            "high_lexical_density": lexical_density > 0.6,
+            "long_sentences": avg_sentence_length > 20
+        }
     }
+
+    return create_standard_response(
+        score=score,
+        bucket=bucket,
+        raw_emotions=raw_emotions,
+        confidence=confidence,
+        details=details
+    )

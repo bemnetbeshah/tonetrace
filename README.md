@@ -133,7 +133,85 @@ POST /students/{student_id}/samples/
 GET /students/{student_id}/profile/
 ```
 
-### Example Analysis Response
+### Standardized Analyzer Response Format
+
+All analyzers now return a consistent JSON schema for easy integration and comparison:
+
+```json
+{
+  "score": 0.88,                    # Primary metric (0.0-1.0 range)
+  "bucket": "persuasive",           # Categorical classification
+  "raw_emotions": [                 # Detailed breakdown
+    {"label": "confidence", "score": 0.92},
+    {"label": "enthusiasm", "score": 0.75}
+  ],
+  "confidence": 0.85,               # Analysis confidence (0.0-1.0)
+  "details": {                      # Additional metrics
+    "top_emotion": "pride",
+    "complexity_factors": {...}
+  }
+}
+```
+
+#### Analyzer-Specific Examples
+
+**Tone Analysis:**
+```json
+{
+  "score": 0.92,
+  "bucket": "confident",
+  "raw_emotions": [
+    {"label": "pride", "score": 0.92},
+    {"label": "admiration", "score": 0.78}
+  ],
+  "confidence": 0.92,
+  "details": {
+    "top_emotion": "pride",
+    "has_secondary_tone": false
+  }
+}
+```
+
+**Sentiment Analysis:**
+```json
+{
+  "score": 0.23,
+  "bucket": "positive",
+  "raw_emotions": [
+    {"label": "polarity", "score": 0.23},
+    {"label": "subjectivity", "score": 0.45}
+  ],
+  "confidence": 0.23,
+  "details": {
+    "polarity": 0.23,
+    "subjectivity": 0.45,
+    "polarity_range": "positive",
+    "subjectivity_level": "balanced"
+  }
+}
+```
+
+**Formality Analysis:**
+```json
+{
+  "score": 0.9,
+  "bucket": "formal",
+  "raw_emotions": [
+    {"label": "flesch_kincaid_grade", "score": 12.5},
+    {"label": "gunning_fog_index", "score": 14.2}
+  ],
+  "confidence": 0.8,
+  "details": {
+    "flesch_kincaid_grade": 12.5,
+    "gunning_fog_index": 14.2,
+    "dale_chall_score": 8.9,
+    "grade_level": 12.5,
+    "education_level": "advanced"
+  }
+}
+```
+
+### Legacy Example Analysis Response
 ```json
 {
   "student": "Abel T.",

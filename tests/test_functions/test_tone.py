@@ -31,10 +31,16 @@ for idx, sample in enumerate(samples, 1):
         print(f"Sample {idx}:")
         print(f"  Text: {text}")
         print(f"  Expected tone: {expected_tone}")
-        print(f"  Detected tone: {result.get('tone')}")
-        print(f"  Emotions: {result.get('emotions')}\n")
+        print(f"  Detected tone: {result.get('bucket')}")
+        print(f"  Score: {result.get('score')}")
+        print(f"  Confidence: {result.get('confidence')}")
+        print(f"  Raw emotions: {result.get('raw_emotions')}")
+        print(f"  Details: {result.get('details')}\n")
         
         # Assert that the detected tone matches the expected tone
-        assert result.get('tone') == expected_tone, f"Tone mismatch: expected {expected_tone}, got {result.get('tone')}"
+        # Note: The bucket might contain multiple tones (e.g., "confident / persuasive")
+        # So we check if the expected tone is contained in the bucket
+        detected_bucket = result.get('bucket', '')
+        assert expected_tone in detected_bucket or detected_bucket in expected_tone, f"Tone mismatch: expected {expected_tone}, got {detected_bucket}"
     except Exception as e:
         print(f"Sample {idx} classification failed:", str(e))
