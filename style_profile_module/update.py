@@ -1,4 +1,4 @@
-from profile.style_profile import StyleProfile
+from .style_profile import StyleProfile
 
 
 def update_style_profile(profile: StyleProfile, new_analysis: dict) -> StyleProfile:

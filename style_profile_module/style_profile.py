@@ -25,6 +25,41 @@ class StyleProfile:
     hedging_count: int = 0
     total_texts: int = 0
 
+    def to_dict(self) -> Dict:
+        """Convert the StyleProfile to a dictionary for storage."""
+        return {
+            "tone_distribution": self.tone_distribution,
+            "emotion_distribution": self.emotion_distribution,
+            "sentiment_history": self.sentiment_history,
+            "average_sentiment": self.average_sentiment,
+            "lexical_diversity_scores": self.lexical_diversity_scores,
+            "average_lexical_diversity": self.average_lexical_diversity,
+            "formality_grades": self.formality_grades,
+            "average_formality": self.average_formality,
+            "complexity": self.complexity,
+            "passive_voice_ratios": self.passive_voice_ratios,
+            "hedging_count": self.hedging_count,
+            "total_texts": self.total_texts
+        }
+
+    @classmethod
+    def from_dict(cls, data: Dict) -> 'StyleProfile':
+        """Create a StyleProfile from a dictionary."""
+        return cls(
+            tone_distribution=data.get("tone_distribution", {}),
+            emotion_distribution=data.get("emotion_distribution", {}),
+            sentiment_history=data.get("sentiment_history", []),
+            average_sentiment=data.get("average_sentiment", 0.0),
+            lexical_diversity_scores=data.get("lexical_diversity_scores", []),
+            average_lexical_diversity=data.get("average_lexical_diversity", 0.0),
+            formality_grades=data.get("formality_grades", []),
+            average_formality=data.get("average_formality", 0.0),
+            complexity=data.get("complexity", {"sentence_length": [], "lexical_density": []}),
+            passive_voice_ratios=data.get("passive_voice_ratios", []),
+            hedging_count=data.get("hedging_count", 0),
+            total_texts=data.get("total_texts", 0)
+        )
+
     def update(self, new_analysis: dict):
         """Update the style profile with new analysis results."""
         self.total_texts += 1
