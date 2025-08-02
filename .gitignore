@@ -46,3 +46,6 @@ poetry.lock
 
 # === Scripts for testing ===
 temp_script.py
+
+# === Internal Documentation ===
+internal docs/
