@@ -5,6 +5,7 @@ from analyzers.tone import classify_tone_model
 from analyzers.sentiment import analyze_sentiment
 from analyzers.passive_voice import detect_passive_sentences
 from analyzers.lexical import compute_lexical_diversity
+from analyzers.hedging import detect_hedging
 from analyzers.anomaly import detect_anomaly
 from style_profile_module import StyleProfile
 from services.database import get_user_profile, save_user_profile, create_default_profile
@@ -27,6 +28,7 @@ async def analyze_text(payload: AnalyzeRequest):
     sentiment_result = analyze_sentiment(text)
     passive_analysis = detect_passive_sentences(text)
     lexical_diversity = compute_lexical_diversity(text)
+    hedging_analysis = detect_hedging(text)
     
     # Create current style profile from analysis results
     current_profile = StyleProfile()
@@ -42,7 +44,7 @@ async def analyze_text(payload: AnalyzeRequest):
         },
         "passive_voice": {"passive_sentence_ratio": passive_analysis.get("score", 0)},
         "lexical_diversity": lexical_diversity.get("score", 0),
-        "hedging_count": 0  # TODO: Add hedging analysis
+        "hedging_count": hedging_analysis.get("score", 0)
     }
     
     # Update the current profile with this analysis
@@ -69,6 +71,7 @@ async def analyze_text(payload: AnalyzeRequest):
         "sentiment": sentiment_result,
         "passive_voice": passive_analysis,
         "lexical_diversity": lexical_diversity,
+        "hedging": hedging_analysis,
         "anomaly": anomaly_result["anomaly"],
         "anomaly_reasons": anomaly_result["anomaly_reasons"],
         "anomaly_details": anomaly_result["details"]
