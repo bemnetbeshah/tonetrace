@@ -7,6 +7,7 @@ from analyzers.passive_voice import detect_passive_sentences
 from analyzers.lexical import compute_lexical_diversity
 from analyzers.hedging import detect_hedging
 from analyzers.anomaly import detect_anomaly
+from analyzers.grammar import analyze_grammar
 from style_profile_module import StyleProfile
 from services.database import get_user_profile, save_user_profile, create_default_profile
 
@@ -76,4 +77,12 @@ async def analyze_text(payload: AnalyzeRequest):
         "anomaly_reasons": anomaly_result["anomaly_reasons"],
         "anomaly_details": anomaly_result["details"]
     }
+
+
+class GrammarInput(BaseModel):
+    text: str
+
+@router.post("/analyze/grammar")
+def grammar_endpoint(input: GrammarInput):
+    return analyze_grammar(input.text)
 
