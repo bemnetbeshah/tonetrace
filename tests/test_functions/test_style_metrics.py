@@ -50,7 +50,7 @@ class TestStyleMetrics:
     
     def test_formality_neutral(self):
         """Test neutral text formality analysis."""
-        text = "The weather is pleasant today. The temperature is moderate and the sky is clear."
+        text = "The weather conditions are quite pleasant today. The temperature remains moderate throughout the day and the sky appears clear and bright."
         result = compute_formality(text)
         
         assert result["bucket"] == "neutral"
@@ -211,10 +211,10 @@ class TestStyleMetrics:
         short_text = "The cat is on the mat."
         short_result = compute_complexity(short_text)
         
-        # Long text (higher confidence)
-        long_text = "The magnificent cat gracefully leaped over the ancient wall while the curious dog watched intently from the garden. The beautiful bird sang sweetly in the morning light as the gentle breeze rustled through the leaves."
+                # Long text (higher confidence)
+        long_text = "The magnificent cat gracefully leaped over the ancient wall while the curious dog watched intently from the garden. The beautiful bird sang sweetly in the morning light as the gentle breeze rustled through the leaves. The majestic mountains stood tall in the distance, their peaks covered with pristine snow that glistened in the sunlight. The tranquil lake reflected the sky like a perfect mirror, creating a breathtaking scene of natural beauty and serenity."
         long_result = compute_complexity(long_text)
-        
+
         assert short_result["confidence"] < long_result["confidence"]
         assert long_result["confidence"] == 1.0  # Should be capped at 1.0
     

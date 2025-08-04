@@ -5,9 +5,11 @@ from analyzers.tone import classify_tone_model
 from analyzers.sentiment import analyze_sentiment
 from analyzers.passive_voice import detect_passive_sentences
 from analyzers.lexical import compute_lexical_diversity
+from analyzers.lexical_richness import analyze_lexical_richness
 from analyzers.hedging import detect_hedging
 from analyzers.anomaly import detect_anomaly
 from analyzers.grammar import analyze_grammar
+from analyzers.readability import analyze_readability, get_readability_interpretation
 from style_profile_module import StyleProfile
 from services.database import get_user_profile, save_user_profile, create_default_profile
 
@@ -30,6 +32,7 @@ async def analyze_text(payload: AnalyzeRequest):
     passive_analysis = detect_passive_sentences(text)
     lexical_diversity = compute_lexical_diversity(text)
     hedging_analysis = detect_hedging(text)
+    readability_analysis = analyze_readability(text)
     
     # Create current style profile from analysis results
     current_profile = StyleProfile()
@@ -45,7 +48,13 @@ async def analyze_text(payload: AnalyzeRequest):
         },
         "passive_voice": {"passive_sentence_ratio": passive_analysis.get("score", 0)},
         "lexical_diversity": lexical_diversity.get("score", 0),
-        "hedging_count": hedging_analysis.get("score", 0)
+        "hedging_count": hedging_analysis.get("score", 0),
+        "readability": {
+            "flesch_kincaid_grade": readability_analysis.get("flesch_kincaid_grade", 0),
+            "smog_index": readability_analysis.get("smog_index", 0),
+            "gunning_fog": readability_analysis.get("gunning_fog", 0),
+            "dale_chall_score": readability_analysis.get("dale_chall_score", 0)
+        }
     }
     
     # Update the current profile with this analysis
@@ -73,6 +82,7 @@ async def analyze_text(payload: AnalyzeRequest):
         "passive_voice": passive_analysis,
         "lexical_diversity": lexical_diversity,
         "hedging": hedging_analysis,
+        "readability": readability_analysis,
         "anomaly": anomaly_result["anomaly"],
         "anomaly_reasons": anomaly_result["anomaly_reasons"],
         "anomaly_details": anomaly_result["details"]
@@ -85,4 +95,31 @@ class GrammarInput(BaseModel):
 @router.post("/analyze/grammar")
 def grammar_endpoint(input: GrammarInput):
     return analyze_grammar(input.text)
+
+@router.post("/analyze/readability")
+def readability_endpoint(input: GrammarInput):
+    """
+    Analyze text readability using multiple academic scoring methods.
+    
+    Returns:
+        dict: Readability scores and educational interpretations
+    """
+    scores = analyze_readability(input.text)
+    interpretations = get_readability_interpretation(scores)
+    
+    return {
+        "scores": scores,
+        "interpretations": interpretations
+    }
+
+@router.post("/analyze/lexical-richness")
+def lexical_richness_endpoint(input: GrammarInput):
+    """
+    Analyze lexical richness using word frequency scores (Zipf scale).
+    
+    Returns:
+        dict: Lexical richness metrics including average Zipf score, 
+              percentage of rare words, and vocabulary sophistication
+    """
+    return analyze_lexical_richness(input.text)
 
