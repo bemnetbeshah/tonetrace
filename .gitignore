@@ -10,7 +10,11 @@ __pycache__/
 venv/
 ENV/
 env/
-*.env
+# Environment files - exclude secrets but allow examples
+.env
+.env.local
+.env.*.local
+!.env.example
 
 # === VS Code ===
 .vscode/
