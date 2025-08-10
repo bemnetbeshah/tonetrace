@@ -1,30 +1,31 @@
 # analyzers/readability.py
 
 import textstat
+from . import create_standard_response
 
 def analyze_readability(text):
     """
     Analyzes text readability using multiple academic scoring methods.
+    Returns a standardized response with score, bucket, raw, confidence, and details.
     
     Args:
         text (str): The text to analyze
         
     Returns:
-        dict: Dictionary containing readability scores and metrics
+        dict: Standardized response dictionary
     """
     if not text or not text.strip():
-        return {
-            "flesch_kincaid_grade": 0,
-            "smog_index": 0,
-            "gunning_fog": 0,
-            "dale_chall_score": 0,
-            "word_count": 0,
-            "sentence_count": 0,
-            "error": "No text provided for analysis"
-        }
+        return create_standard_response(
+            score=None,
+            bucket="error",
+            raw={"error": "No text provided for analysis"},
+            confidence=None,
+            details={}
+        )
     
     try:
-        return {
+        # Get raw readability scores
+        raw_scores = {
             "flesch_kincaid_grade": round(textstat.flesch_kincaid_grade(text), 2),
             "smog_index": round(textstat.smog_index(text), 2),
             "gunning_fog": round(textstat.gunning_fog(text), 2),
@@ -32,16 +33,54 @@ def analyze_readability(text):
             "word_count": textstat.lexicon_count(text, removepunct=True),
             "sentence_count": textstat.sentence_count(text)
         }
-    except Exception as e:
-        return {
-            "flesch_kincaid_grade": 0,
-            "smog_index": 0,
-            "gunning_fog": 0,
-            "dale_chall_score": 0,
-            "word_count": 0,
-            "sentence_count": 0,
-            "error": f"Error analyzing readability: {str(e)}"
+        
+        # Use Flesch-Kincaid as primary score
+        primary_score = raw_scores["flesch_kincaid_grade"]
+        
+        # Determine readability bucket
+        if primary_score <= 5:
+            bucket = "elementary"
+        elif primary_score <= 8:
+            bucket = "middle_school"
+        elif primary_score <= 12:
+            bucket = "high_school"
+        elif primary_score <= 16:
+            bucket = "college"
+        else:
+            bucket = "graduate"
+        
+        # Calculate confidence based on text length (more text = higher confidence)
+        confidence = min(1.0, raw_scores["word_count"] / 100.0) if raw_scores["word_count"] > 0 else 0.0
+        
+        # Get interpretations and recommendations
+        interpretations = get_readability_interpretation(raw_scores)
+        
+        # Create details with normalized metrics
+        details = {
+            "interpretations": interpretations,
+            "primary_metric": "flesch_kincaid_grade",
+            "text_stats": {
+                "word_count": raw_scores["word_count"],
+                "sentence_count": raw_scores["sentence_count"]
+            }
         }
+        
+        return create_standard_response(
+            score=primary_score,
+            bucket=bucket,
+            raw=raw_scores,
+            confidence=confidence,
+            details=details
+        )
+        
+    except Exception as e:
+        return create_standard_response(
+            score=None,
+            bucket="error",
+            raw={"error": f"Error analyzing readability: {str(e)}"},
+            confidence=None,
+            details={}
+        )
 
 def get_readability_interpretation(scores):
     """

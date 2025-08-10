@@ -13,7 +13,15 @@ def update_style_profile(profile: StyleProfile, new_analysis: dict) -> StyleProf
         "complexity": {"sentence_length": 17.3, "lexical_density": 0.48},
         "passive_voice": {"passive_sentence_ratio": 0.1},
         "lexical_diversity": 0.75,
-        "hedging_count": 2
+        "hedging_count": 2,
+        "grammar": {"num_errors": 3, "errors": [...]},
+        "lexical_richness": 0.8,
+        "readability": {
+            "flesch_kincaid_grade": 12.5,
+            "smog_index": 14.2,
+            "gunning_fog": 15.1,
+            "dale_chall_score": 8.5
+        }
     }
     """
     profile.total_texts += 1
@@ -56,5 +64,24 @@ def update_style_profile(profile: StyleProfile, new_analysis: dict) -> StyleProf
     # Hedging
     hedges = new_analysis.get("hedging_count", 0)
     profile.hedging_count += hedges
+    
+    # Grammar
+    grammar_errors = new_analysis.get("grammar", {}).get("num_errors")
+    if grammar_errors is not None:
+        profile.grammar_error_counts.append(grammar_errors)
+        profile.average_grammar_errors = sum(profile.grammar_error_counts) / len(profile.grammar_error_counts)
+    
+    # Lexical richness
+    lexical_richness = new_analysis.get("lexical_richness")
+    if lexical_richness is not None:
+        profile.lexical_richness_scores.append(lexical_richness)
+        profile.average_lexical_richness = sum(profile.lexical_richness_scores) / len(profile.lexical_richness_scores)
+    
+    # Readability
+    readability_data = new_analysis.get("readability", {})
+    for metric in ["flesch_kincaid_grade", "smog_index", "gunning_fog", "dale_chall_score"]:
+        if metric in readability_data:
+            profile.readability_scores[metric].append(readability_data[metric])
+            profile.average_readability[metric] = sum(profile.readability_scores[metric]) / len(profile.readability_scores[metric])
 
     return profile 

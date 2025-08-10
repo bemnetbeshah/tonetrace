@@ -13,7 +13,7 @@ def map_emotion_to_tone(label: str) -> str:
 def classify_tone_model(text: str, threshold: float = 0.4, score_diff: float = 0.05) -> dict:
     """
     Classifies the tone of the given text based on emotion scores.
-    Returns a standardized response with score, bucket, raw_emotions, confidence, and details.
+    Returns a standardized response with score, bucket, raw, confidence, and details.
     """
     raw_scores = emotion_classifier(text)[0]
     emotions = [
@@ -47,20 +47,26 @@ def classify_tone_model(text: str, threshold: float = 0.4, score_diff: float = 0
     else:
         bucket = mapped_tone
     
+    # Create raw output with all analyzer details
+    raw = {
+        "emotion_scores": raw_scores,
+        "filtered_emotions": emotions,
+        "threshold": threshold,
+        "score_diff_threshold": score_diff
+    }
+    
     # Create details with additional information
     details = {
         "top_emotion": top_label,
         "top_emotion_score": top_emotion["score"],
         "has_secondary_tone": has_secondary_tone,
-        "secondary_tone": secondary_tone,
-        "threshold": threshold,
-        "score_diff_threshold": score_diff
+        "secondary_tone": secondary_tone
     }
     
     return create_standard_response(
         score=top_emotion["score"],
         bucket=bucket,
-        raw_emotions=emotions,
+        raw=raw,
         confidence=confidence,
         details=details
     )

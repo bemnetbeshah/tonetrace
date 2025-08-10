@@ -146,6 +146,35 @@ def detect_anomaly(current: StyleProfile, baseline: StyleProfile) -> Dict[str, A
         if sentiment_diff > 0.20:
             reasons.append(f"Sentiment deviation: {sentiment_diff:.1%}")
     
+    # Compare grammar errors (threshold: ±25%)
+    if current.average_grammar_errors > 0 and baseline.average_grammar_errors > 0:
+        grammar_diff = percentage_diff(current.average_grammar_errors, baseline.average_grammar_errors)
+        details["grammar_diff"] = grammar_diff
+        
+        if grammar_diff > 0.25:
+            reasons.append(f"Grammar error deviation: {grammar_diff:.1%}")
+    
+    # Compare lexical richness (threshold: ±20%)
+    if current.average_lexical_richness > 0 and baseline.average_lexical_richness > 0:
+        lexical_richness_diff = percentage_diff(current.average_lexical_richness, baseline.average_lexical_richness)
+        details["lexical_richness_diff"] = lexical_richness_diff
+        
+        if lexical_richness_diff > 0.20:
+            reasons.append(f"Lexical richness deviation: {lexical_richness_diff:.1%}")
+    
+    # Compare readability scores (threshold: ±15%)
+    for metric in ["flesch_kincaid_grade", "smog_index", "gunning_fog", "dale_chall_score"]:
+        if (current.average_readability.get(metric, 0) > 0 and 
+            baseline.average_readability.get(metric, 0) > 0):
+            current_readability = current.average_readability[metric]
+            baseline_readability = baseline.average_readability[metric]
+            
+            readability_diff = percentage_diff(current_readability, baseline_readability)
+            details[f"{metric}_diff"] = readability_diff
+            
+            if readability_diff > 0.15:
+                reasons.append(f"{metric.replace('_', ' ').title()} deviation: {readability_diff:.1%}")
+    
     # Determine if anomaly exists
     anomaly_detected = len(reasons) > 0
     

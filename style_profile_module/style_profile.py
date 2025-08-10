@@ -23,6 +23,27 @@ class StyleProfile:
 
     passive_voice_ratios: List[float] = field(default_factory=list)
     hedging_count: int = 0
+    
+    # New fields for additional analyzers
+    grammar_error_counts: List[int] = field(default_factory=list)
+    average_grammar_errors: float = 0.0
+    
+    lexical_richness_scores: List[float] = field(default_factory=list)
+    average_lexical_richness: float = 0.0
+    
+    readability_scores: Dict[str, List[float]] = field(default_factory=lambda: {
+        "flesch_kincaid_grade": [],
+        "smog_index": [],
+        "gunning_fog": [],
+        "dale_chall_score": []
+    })
+    average_readability: Dict[str, float] = field(default_factory=lambda: {
+        "flesch_kincaid_grade": 0.0,
+        "smog_index": 0.0,
+        "gunning_fog": 0.0,
+        "dale_chall_score": 0.0
+    })
+    
     total_texts: int = 0
 
     def to_dict(self) -> Dict:
@@ -39,6 +60,12 @@ class StyleProfile:
             "complexity": self.complexity,
             "passive_voice_ratios": self.passive_voice_ratios,
             "hedging_count": self.hedging_count,
+            "grammar_error_counts": self.grammar_error_counts,
+            "average_grammar_errors": self.average_grammar_errors,
+            "lexical_richness_scores": self.lexical_richness_scores,
+            "average_lexical_richness": self.average_lexical_richness,
+            "readability_scores": self.readability_scores,
+            "average_readability": self.average_readability,
             "total_texts": self.total_texts
         }
 
@@ -57,6 +84,22 @@ class StyleProfile:
             complexity=data.get("complexity", {"sentence_length": [], "lexical_density": []}),
             passive_voice_ratios=data.get("passive_voice_ratios", []),
             hedging_count=data.get("hedging_count", 0),
+            grammar_error_counts=data.get("grammar_error_counts", []),
+            average_grammar_errors=data.get("average_grammar_errors", 0.0),
+            lexical_richness_scores=data.get("lexical_richness_scores", []),
+            average_lexical_richness=data.get("average_lexical_richness", 0.0),
+            readability_scores=data.get("readability_scores", {
+                "flesch_kincaid_grade": [],
+                "smog_index": [],
+                "gunning_fog": [],
+                "dale_chall_score": []
+            }),
+            average_readability=data.get("average_readability", {
+                "flesch_kincaid_grade": 0.0,
+                "smog_index": 0.0,
+                "gunning_fog": 0.0,
+                "dale_chall_score": 0.0
+            }),
             total_texts=data.get("total_texts", 0)
         )
 
@@ -102,4 +145,21 @@ class StyleProfile:
 
         # Update hedging count
         hedging = new_analysis.get("hedging", {}).get("count", 0)
-        self.hedging_count += hedging 
+        self.hedging_count += hedging
+        
+        # Update grammar error count
+        grammar_errors = new_analysis.get("grammar", {}).get("num_errors", 0)
+        self.grammar_error_counts.append(grammar_errors)
+        self.average_grammar_errors = sum(self.grammar_error_counts) / len(self.grammar_error_counts)
+        
+        # Update lexical richness
+        lexical_richness = new_analysis.get("lexical_richness", {}).get("score", 0)
+        self.lexical_richness_scores.append(lexical_richness)
+        self.average_lexical_richness = sum(self.lexical_richness_scores) / len(self.lexical_richness_scores)
+        
+        # Update readability scores
+        readability_data = new_analysis.get("readability", {})
+        for metric in ["flesch_kincaid_grade", "smog_index", "gunning_fog", "dale_chall_score"]:
+            if metric in readability_data:
+                self.readability_scores[metric].append(readability_data[metric])
+                self.average_readability[metric] = sum(self.readability_scores[metric]) / len(self.readability_scores[metric]) 

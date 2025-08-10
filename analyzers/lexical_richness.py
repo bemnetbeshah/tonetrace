@@ -94,10 +94,30 @@ def analyze_lexical_richness(text: str) -> dict:
         }
     }
 
+    # Create raw output with all analyzer details
+    raw = {
+        "avg_zipf_score": round(avg_zipf_score, 2),
+        "percent_rare_words": round(percent_rare_words, 3),
+        "num_advanced_words": rare_count,
+        "total_tokens": len(tokens),
+        "rare_threshold": rare_threshold,
+        "vocabulary_sophistication": {
+            "very_rare_words": sum(1 for score in zipf_scores if score < 3.0),
+            "rare_words": sum(1 for score in zipf_scores if 3.0 <= score < 4.5),
+            "common_words": sum(1 for score in zipf_scores if 4.5 <= score < 6.0),
+            "very_common_words": sum(1 for score in zipf_scores if score >= 6.0)
+        },
+        "zipf_distribution": {
+            "min_score": round(min(zipf_scores), 2),
+            "max_score": round(max(zipf_scores), 2),
+            "median_score": round(sorted(zipf_scores)[len(zipf_scores)//2], 2)
+        }
+    }
+
     return create_standard_response(
         score=score,
         bucket=bucket,
-        raw_emotions=raw_emotions,
+        raw=raw,
         confidence=confidence,
         details=details
     )

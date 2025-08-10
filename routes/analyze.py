@@ -1,5 +1,6 @@
 from fastapi import APIRouter
 from pydantic import BaseModel
+import time
 from analyzers.style_metrics import compute_formality, compute_complexity
 from analyzers.tone import classify_tone_model
 from analyzers.sentiment import analyze_sentiment
@@ -12,6 +13,7 @@ from analyzers.grammar import analyze_grammar
 from analyzers.readability import analyze_readability, get_readability_interpretation
 from style_profile_module import StyleProfile
 from services.database import get_user_profile, save_user_profile, create_default_profile
+from services.analysis_storage import store_analysis_results
 
 router = APIRouter()
 
@@ -24,7 +26,9 @@ async def analyze_text(payload: AnalyzeRequest):
     text = payload.text
     user_id = payload.user_id
 
-    # Run all analyses
+    # Run all analyses with timing
+    start_time = time.time()
+    
     formality_result = compute_formality(text)
     complexity_result = compute_complexity(text)
     tone_result = classify_tone_model(text)
@@ -33,6 +37,28 @@ async def analyze_text(payload: AnalyzeRequest):
     lexical_diversity = compute_lexical_diversity(text)
     hedging_analysis = detect_hedging(text)
     readability_analysis = analyze_readability(text)
+    grammar_analysis = analyze_grammar(text)
+    lexical_richness_analysis = analyze_lexical_richness(text)
+    
+    # Add timing information to results
+    total_time = int((time.time() - start_time) * 1000)  # Convert to milliseconds
+    
+    # Prepare all analysis results for storage
+    all_results = {
+        "formality": formality_result,
+        "complexity": complexity_result,
+        "tone": tone_result,
+        "sentiment": sentiment_result,
+        "passive_voice": passive_analysis,
+        "lexical_diversity": lexical_diversity,
+        "hedging": hedging_analysis,
+        "readability": readability_analysis,
+        "grammar": grammar_analysis,
+        "lexical_richness": lexical_richness_analysis
+    }
+    
+    # Store all analysis results in the database
+    submission_id = await store_analysis_results(text, user_id, all_results)
     
     # Create current style profile from analysis results
     current_profile = StyleProfile()
@@ -54,7 +80,12 @@ async def analyze_text(payload: AnalyzeRequest):
             "smog_index": readability_analysis.get("smog_index", 0),
             "gunning_fog": readability_analysis.get("gunning_fog", 0),
             "dale_chall_score": readability_analysis.get("dale_chall_score", 0)
-        }
+        },
+        "grammar": {
+            "num_errors": grammar_analysis.get("raw", {}).get("num_errors", 0),
+            "error": grammar_analysis.get("raw", {}).get("errors", [])
+        },
+        "lexical_richness": lexical_richness_analysis.get("score", 0)
     }
     
     # Update the current profile with this analysis
@@ -75,6 +106,8 @@ async def analyze_text(payload: AnalyzeRequest):
     save_user_profile(user_id, current_profile)
     
     return {
+        "submission_id": submission_id,
+        "total_analysis_time_ms": total_time,
         "formality": formality_result,
         "complexity": complexity_result,
         "tone": tone_result,
@@ -83,6 +116,8 @@ async def analyze_text(payload: AnalyzeRequest):
         "lexical_diversity": lexical_diversity,
         "hedging": hedging_analysis,
         "readability": readability_analysis,
+        "grammar": grammar_analysis,
+        "lexical_richness": lexical_richness_analysis,
         "anomaly": anomaly_result["anomaly"],
         "anomaly_reasons": anomaly_result["anomaly_reasons"],
         "anomaly_details": anomaly_result["details"]
@@ -122,4 +157,19 @@ def lexical_richness_endpoint(input: GrammarInput):
               percentage of rare words, and vocabulary sophistication
     """
     return analyze_lexical_richness(input.text)
+
+@router.get("/analyze/history/{user_id}")
+async def get_analysis_history(user_id: str, limit: int = 10):
+    """
+    Retrieve analysis history for a user.
+    
+    Args:
+        user_id: The user identifier
+        limit: Maximum number of submissions to return (default: 10)
+        
+    Returns:
+        List of analysis submissions with results
+    """
+    from services.analysis_storage import get_analysis_history
+    return await get_analysis_history(user_id, limit)
 
