@@ -4,39 +4,26 @@ from typing import List, Dict
 
 @dataclass
 class StyleProfile:
+    # Tone and emotion distribution (aggregated counts)
     tone_distribution: Dict[str, int] = field(default_factory=dict)
     emotion_distribution: Dict[str, int] = field(default_factory=dict)
 
-    sentiment_history: List[float] = field(default_factory=list)
+    # Current averages (computed from database, not stored lists)
     average_sentiment: float = 0.0
-
-    lexical_diversity_scores: List[float] = field(default_factory=list)
     average_lexical_diversity: float = 0.0
-
-    formality_grades: List[float] = field(default_factory=list)
     average_formality: float = 0.0
-
-    complexity: Dict[str, List[float]] = field(default_factory=lambda: {
-        "sentence_length": [],
-        "lexical_density": []
-    })
-
-    passive_voice_ratios: List[float] = field(default_factory=list)
-    hedging_count: int = 0
-    
-    # New fields for additional analyzers
-    grammar_error_counts: List[int] = field(default_factory=list)
     average_grammar_errors: float = 0.0
-    
-    lexical_richness_scores: List[float] = field(default_factory=list)
     average_lexical_richness: float = 0.0
     
-    readability_scores: Dict[str, List[float]] = field(default_factory=lambda: {
-        "flesch_kincaid_grade": [],
-        "smog_index": [],
-        "gunning_fog": [],
-        "dale_chall_score": []
-    })
+    # Complexity averages
+    average_sentence_length: float = 0.0
+    average_lexical_density: float = 0.0
+    
+    # Passive voice and hedging averages
+    average_passive_voice_ratio: float = 0.0
+    total_hedging_count: int = 0
+    
+    # Readability averages
     average_readability: Dict[str, float] = field(default_factory=lambda: {
         "flesch_kincaid_grade": 0.0,
         "smog_index": 0.0,
@@ -44,29 +31,27 @@ class StyleProfile:
         "dale_chall_score": 0.0
     })
     
+    # Overall statistics
     total_texts: int = 0
+    last_updated: str = ""
 
     def to_dict(self) -> Dict:
         """Convert the StyleProfile to a dictionary for storage."""
         return {
             "tone_distribution": self.tone_distribution,
             "emotion_distribution": self.emotion_distribution,
-            "sentiment_history": self.sentiment_history,
             "average_sentiment": self.average_sentiment,
-            "lexical_diversity_scores": self.lexical_diversity_scores,
             "average_lexical_diversity": self.average_lexical_diversity,
-            "formality_grades": self.formality_grades,
             "average_formality": self.average_formality,
-            "complexity": self.complexity,
-            "passive_voice_ratios": self.passive_voice_ratios,
-            "hedging_count": self.hedging_count,
-            "grammar_error_counts": self.grammar_error_counts,
             "average_grammar_errors": self.average_grammar_errors,
-            "lexical_richness_scores": self.lexical_richness_scores,
             "average_lexical_richness": self.average_lexical_richness,
-            "readability_scores": self.readability_scores,
+            "average_sentence_length": self.average_sentence_length,
+            "average_lexical_density": self.average_lexical_density,
+            "average_passive_voice_ratio": self.average_passive_voice_ratio,
+            "total_hedging_count": self.total_hedging_count,
             "average_readability": self.average_readability,
-            "total_texts": self.total_texts
+            "total_texts": self.total_texts,
+            "last_updated": self.last_updated
         }
 
     @classmethod
@@ -75,38 +60,29 @@ class StyleProfile:
         return cls(
             tone_distribution=data.get("tone_distribution", {}),
             emotion_distribution=data.get("emotion_distribution", {}),
-            sentiment_history=data.get("sentiment_history", []),
             average_sentiment=data.get("average_sentiment", 0.0),
-            lexical_diversity_scores=data.get("lexical_diversity_scores", []),
             average_lexical_diversity=data.get("average_lexical_diversity", 0.0),
-            formality_grades=data.get("formality_grades", []),
             average_formality=data.get("average_formality", 0.0),
-            complexity=data.get("complexity", {"sentence_length": [], "lexical_density": []}),
-            passive_voice_ratios=data.get("passive_voice_ratios", []),
-            hedging_count=data.get("hedging_count", 0),
-            grammar_error_counts=data.get("grammar_error_counts", []),
             average_grammar_errors=data.get("average_grammar_errors", 0.0),
-            lexical_richness_scores=data.get("lexical_richness_scores", []),
             average_lexical_richness=data.get("average_lexical_richness", 0.0),
-            readability_scores=data.get("readability_scores", {
-                "flesch_kincaid_grade": [],
-                "smog_index": [],
-                "gunning_fog": [],
-                "dale_chall_score": []
-            }),
+            average_sentence_length=data.get("average_sentence_length", 0.0),
+            average_lexical_density=data.get("average_lexical_density", 0.0),
+            average_passive_voice_ratio=data.get("average_passive_voice_ratio", 0.0),
+            total_hedging_count=data.get("total_hedging_count", 0),
             average_readability=data.get("average_readability", {
                 "flesch_kincaid_grade": 0.0,
                 "smog_index": 0.0,
                 "gunning_fog": 0.0,
                 "dale_chall_score": 0.0
             }),
-            total_texts=data.get("total_texts", 0)
+            total_texts=data.get("total_texts", 0),
+            last_updated=data.get("last_updated", "")
         )
 
-    def update(self, new_analysis: dict):
-        """Update the style profile with new analysis results."""
-        self.total_texts += 1
-
+    def update_averages(self, new_analysis: dict, total_texts: int):
+        """Update the style profile averages with new analysis results."""
+        self.total_texts = total_texts
+        
         # Update tone distribution
         tone = new_analysis.get("tone")
         if tone:
@@ -117,49 +93,47 @@ class StyleProfile:
         if emotion:
             self.emotion_distribution[emotion] = self.emotion_distribution.get(emotion, 0) + 1
 
-        # Update sentiment history and average
+        # Update sentiment average
         sentiment = new_analysis.get("sentiment", {}).get("polarity", 0)
-        self.sentiment_history.append(sentiment)
-        self.average_sentiment = sum(self.sentiment_history) / len(self.sentiment_history)
+        self.average_sentiment = (self.average_sentiment * (total_texts - 1) + sentiment) / total_texts
 
-        # Update lexical diversity
+        # Update lexical diversity average
         lexical_diversity = new_analysis.get("lexical_diversity", {}).get("score", 0)
-        self.lexical_diversity_scores.append(lexical_diversity)
-        self.average_lexical_diversity = sum(self.lexical_diversity_scores) / len(self.lexical_diversity_scores)
+        self.average_lexical_diversity = (self.average_lexical_diversity * (total_texts - 1) + lexical_diversity) / total_texts
 
-        # Update formality grades
-        formality = new_analysis.get("formality", {}).get("grade", 0)
-        self.formality_grades.append(formality)
-        self.average_formality = sum(self.formality_grades) / len(self.formality_grades)
+        # Update formality average
+        formality = new_analysis.get("formality", {}).get("flesch_kincaid_grade", 0)
+        self.average_formality = (self.average_formality * (total_texts - 1) + formality) / total_texts
 
-        # Update complexity metrics
+        # Update complexity averages
         complexity_data = new_analysis.get("complexity", {})
         if "sentence_length" in complexity_data:
-            self.complexity["sentence_length"].append(complexity_data["sentence_length"])
+            sentence_length = complexity_data["sentence_length"]
+            self.average_sentence_length = (self.average_sentence_length * (total_texts - 1) + sentence_length) / total_texts
         if "lexical_density" in complexity_data:
-            self.complexity["lexical_density"].append(complexity_data["lexical_density"])
+            lexical_density = complexity_data["lexical_density"]
+            self.average_lexical_density = (self.average_lexical_density * (total_texts - 1) + lexical_density) / total_texts
 
-        # Update passive voice ratio
-        passive_voice = new_analysis.get("passive_voice", {}).get("ratio", 0)
-        self.passive_voice_ratios.append(passive_voice)
+        # Update passive voice average
+        passive_voice = new_analysis.get("passive_voice", {}).get("score", 0)
+        self.average_passive_voice_ratio = (self.average_passive_voice_ratio * (total_texts - 1) + passive_voice) / total_texts
 
         # Update hedging count
-        hedging = new_analysis.get("hedging", {}).get("count", 0)
-        self.hedging_count += hedging
+        hedging = new_analysis.get("hedging", {}).get("score", 0)
+        self.total_hedging_count += hedging
         
-        # Update grammar error count
+        # Update grammar error average
         grammar_errors = new_analysis.get("grammar", {}).get("num_errors", 0)
-        self.grammar_error_counts.append(grammar_errors)
-        self.average_grammar_errors = sum(self.grammar_error_counts) / len(self.grammar_error_counts)
+        self.average_grammar_errors = (self.average_grammar_errors * (total_texts - 1) + grammar_errors) / total_texts
         
-        # Update lexical richness
+        # Update lexical richness average
         lexical_richness = new_analysis.get("lexical_richness", {}).get("score", 0)
-        self.lexical_richness_scores.append(lexical_richness)
-        self.average_lexical_richness = sum(self.lexical_richness_scores) / len(self.lexical_richness_scores)
+        self.average_lexical_richness = (self.average_lexical_richness * (total_texts - 1) + lexical_richness) / total_texts
         
-        # Update readability scores
+        # Update readability averages
         readability_data = new_analysis.get("readability", {})
         for metric in ["flesch_kincaid_grade", "smog_index", "gunning_fog", "dale_chall_score"]:
             if metric in readability_data:
-                self.readability_scores[metric].append(readability_data[metric])
-                self.average_readability[metric] = sum(self.readability_scores[metric]) / len(self.readability_scores[metric]) 
+                current_avg = self.average_readability[metric]
+                new_value = readability_data[metric]
+                self.average_readability[metric] = (current_avg * (total_texts - 1) + new_value) / total_texts 

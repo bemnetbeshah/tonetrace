@@ -2,14 +2,14 @@ import logging
 from typing import Dict, Any, Optional
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
-from app.models import Submission, AnalysisResult, User
+from app.models import Submission, AnalysisResult, Student
 from app.database import AsyncSessionLocal
 
 logger = logging.getLogger(__name__)
 
 async def store_analysis_results(
     text: str,
-    user_id: str,
+    student_id: str,
     analysis_results: Dict[str, Any]
 ) -> Optional[int]:
     """
@@ -17,7 +17,7 @@ async def store_analysis_results(
     
     Args:
         text: The input text that was analyzed
-        user_id: The user identifier
+        student_id: The student identifier
         analysis_results: Dictionary of analyzer results
         
     Returns:
@@ -25,12 +25,12 @@ async def store_analysis_results(
     """
     try:
         async with AsyncSessionLocal() as session:
-            # Get or create user
-            user = await get_or_create_user(session, user_id)
+            # Get or create student
+            student = await get_or_create_student(session, student_id)
             
             # Create submission
             submission = Submission(
-                user_id=user.id,
+                student_id=student.id,
                 text=text
             )
             session.add(submission)
@@ -62,20 +62,20 @@ async def store_analysis_results(
         logger.error(f"Failed to store analysis results: {e}")
         return None
 
-async def get_or_create_user(session: AsyncSession, user_id: str) -> User:
-    """Get existing user or create a new one."""
-    # For now, create a simple user with email as user_id
+async def get_or_create_student(session: AsyncSession, student_id: str) -> Student:
+    """Get existing student or create a new one."""
+    # For now, create a simple student with email as student_id
     # In production, this would be handled by authentication
-    stmt = select(User).where(User.email == f"{user_id}@example.com")
+    stmt = select(Student).where(Student.email == f"{student_id}@example.com")
     result = await session.execute(stmt)
-    user = result.scalar_one_or_none()
+    student = result.scalar_one_or_none()
     
-    if not user:
-        user = User(email=f"{user_id}@example.com")
-        session.add(user)
+    if not student:
+        student = Student(email=f"{student_id}@example.com")
+        session.add(student)
         await session.flush()
     
-    return user
+    return student
 
 def _prepare_result_json(result: Any) -> Dict[str, Any]:
     """Convert analyzer result to JSON-serializable format."""
@@ -86,12 +86,12 @@ def _prepare_result_json(result: Any) -> Dict[str, Any]:
     else:
         return {"value": str(result)}
 
-async def get_analysis_history(user_id: str, limit: int = 10) -> list[Dict[str, Any]]:
+async def get_analysis_history(student_id: str, limit: int = 10) -> list[Dict[str, Any]]:
     """
-    Retrieve analysis history for a user.
+    Retrieve analysis history for a student.
     
     Args:
-        user_id: The user identifier
+        student_id: The student identifier
         limit: Maximum number of submissions to return
         
     Returns:
@@ -99,18 +99,18 @@ async def get_analysis_history(user_id: str, limit: int = 10) -> list[Dict[str, 
     """
     try:
         async with AsyncSessionLocal() as session:
-            # Get user
-            stmt = select(User).where(User.email == f"{user_id}@example.com")
+            # Get student
+            stmt = select(Student).where(Student.email == f"{student_id}@example.com")
             result = await session.execute(stmt)
-            user = result.scalar_one_or_none()
+            student = result.scalar_one_or_none()
             
-            if not user:
+            if not student:
                 return []
             
             # Get submissions with results
             stmt = (
                 select(Submission)
-                .where(Submission.user_id == user.id)
+                .where(Submission.student_id == student.id)
                 .order_by(Submission.created_at.desc())
                 .limit(limit)
             )

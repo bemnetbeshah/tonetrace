@@ -7,16 +7,17 @@ from sqlalchemy.orm import relationship, Mapped, mapped_column
 from sqlalchemy.dialects.postgresql import JSONB
 from app.database import Base
 
-class User(Base):
-    __tablename__ = "users"
+class Student(Base):
+    __tablename__ = "students"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
     email: Mapped[str] = mapped_column(String(255), unique=True, index=True, nullable=False)
+    name: Mapped[str | None] = mapped_column(String(255), nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, nullable=False)
 
     submissions: Mapped[list["Submission"]] = relationship(
         "Submission",
-        back_populates="user",
+        back_populates="student",
         cascade="all, delete-orphan",
         passive_deletes=True,
     )
@@ -25,16 +26,16 @@ class Submission(Base):
     __tablename__ = "submissions"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
-    user_id: Mapped[int] = mapped_column(
+    student_id: Mapped[int] = mapped_column(
         Integer,
-        ForeignKey("users.id", ondelete="CASCADE"),
+        ForeignKey("students.id", ondelete="CASCADE"),
         nullable=False,
         index=True,
     )
     text: Mapped[str] = mapped_column(Text, nullable=False)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, nullable=False)
 
-    user: Mapped["User"] = relationship("User", back_populates="submissions")
+    student: Mapped["Student"] = relationship("Student", back_populates="submissions")
     results: Mapped[list["AnalysisResult"]] = relationship(
         "AnalysisResult",
         back_populates="submission",

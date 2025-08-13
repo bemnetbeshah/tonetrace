@@ -12,19 +12,19 @@ from analyzers.anomaly import detect_anomaly
 from analyzers.grammar import analyze_grammar
 from analyzers.readability import analyze_readability, get_readability_interpretation
 from style_profile_module import StyleProfile
-from services.database import get_user_profile, save_user_profile, create_default_profile
+from services.database import get_student_profile, save_student_profile, create_default_profile
 from services.analysis_storage import store_analysis_results
 
 router = APIRouter()
 
 class AnalyzeRequest(BaseModel):
     text: str
-    user_id: str = "default"  # Default user ID for now
+    student_id: str = "default"  # Default student ID for now
 
 @router.post("/analyze")
 async def analyze_text(payload: AnalyzeRequest):
     text = payload.text
-    user_id = payload.user_id
+    student_id = payload.student_id
 
     # Run all analyses with timing
     start_time = time.time()
@@ -58,7 +58,7 @@ async def analyze_text(payload: AnalyzeRequest):
     }
     
     # Store all analysis results in the database
-    submission_id = await store_analysis_results(text, user_id, all_results)
+    submission_id = await store_analysis_results(text, student_id, all_results)
     
     # Create current style profile from analysis results
     current_profile = StyleProfile()
@@ -93,17 +93,17 @@ async def analyze_text(payload: AnalyzeRequest):
     current_profile = update_style_profile(current_profile, analysis_data)
     
     # Get baseline profile from database
-    baseline_profile = get_user_profile(user_id)
+    baseline_profile = get_student_profile(student_id)
     if not baseline_profile:
         # Create default profile if none exists
         baseline_profile = create_default_profile()
-        save_user_profile(user_id, baseline_profile)
+        save_student_profile(student_id, baseline_profile)
     
     # Run anomaly detection
     anomaly_result = detect_anomaly(current_profile, baseline_profile)
     
     # Save updated profile to database
-    save_user_profile(user_id, current_profile)
+    save_student_profile(student_id, current_profile)
     
     return {
         "submission_id": submission_id,
@@ -158,18 +158,18 @@ def lexical_richness_endpoint(input: GrammarInput):
     """
     return analyze_lexical_richness(input.text)
 
-@router.get("/analyze/history/{user_id}")
-async def get_analysis_history(user_id: str, limit: int = 10):
+@router.get("/analyze/history/{student_id}")
+async def get_analysis_history(student_id: str, limit: int = 10):
     """
-    Retrieve analysis history for a user.
+    Retrieve analysis history for a student.
     
     Args:
-        user_id: The user identifier
+        student_id: The student identifier
         limit: Maximum number of submissions to return (default: 10)
         
     Returns:
         List of analysis submissions with results
     """
     from services.analysis_storage import get_analysis_history
-    return await get_analysis_history(user_id, limit)
+    return await get_analysis_history(student_id, limit)
 
