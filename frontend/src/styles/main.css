@@ -64,7 +64,7 @@
   }
 
   .input {
-    @apply w-full px-4 py-2 border border-border rounded-md text-body focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent;
+    @apply w-full px-4 py-2 border border-gray-300 rounded-md text-body focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent;
   }
 
   .sidebar {
@@ -73,5 +73,59 @@
 
   .sidebar-item {
     @apply px-4 py-2 hover:bg-sidebar-hover transition-colors duration-200;
+  }
+}
+
+/* Sidebar Navigation Responsive Rules */
+@layer utilities {
+  /* Ensure sidebar takes full height and has proper layering */
+  .sidebar-container {
+    @apply h-screen;
+  }
+  
+  /* Ensure sidebar is above main content */
+  .layout-sidebar {
+    @apply relative z-10;
+  }
+  
+  /* Ensure main content doesn't overlap sidebar */
+  .layout-main {
+    @apply relative z-0;
+  }
+  
+  /* Add left margin to main content to prevent sidebar overlap */
+  .layout-main {
+    @apply ml-0;
+  }
+  
+  /* Clear visual separation between sidebar and main content */
+  .main-content-separator {
+    @apply border-l border-gray-200;
+  }
+  
+  /* Ensure main content background doesn't extend into sidebar area */
+  .main-content-bg {
+    @apply bg-white;
+  }
+  
+  /* Hide labels on very small screens when collapsed */
+  @media (max-width: 360px) {
+    .sidebar-collapsed .sidebar-label {
+      @apply hidden;
+    }
+  }
+  
+  /* Ensure icons are always visible */
+  .sidebar-icon {
+    @apply flex-shrink-0;
+  }
+  
+  /* Active state styling */
+  .sidebar-active {
+    @apply text-primary-soft font-bold;
+  }
+  
+  .sidebar-active-strip {
+    @apply w-1 h-5 rounded bg-primary flex-shrink-0;
   }
 } 

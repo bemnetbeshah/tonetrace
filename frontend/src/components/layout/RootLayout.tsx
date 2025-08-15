@@ -21,17 +21,17 @@ export const RootLayout: React.FC = () => {
 
   return (
     <div 
-      className="min-h-screen grid bg-surfaceAlt"
+      className="min-h-screen bg-surfaceAlt"
       data-testid="root-layout"
+      style={{
+        display: 'grid',
+        gridTemplateColumns: sidebarCollapsed ? '64px 1fr' : '240px 1fr',
+        transition: 'grid-template-columns 300ms ease-in-out'
+      }}
     >
       {/* Sidebar */}
       <aside 
-        className={`
-          bg-sidebar text-white p-4 transition-all duration-300 ease-in-out
-          ${sidebarCollapsed ? 'w-16' : 'w-60'}
-          md:relative md:translate-x-0
-          ${sidebarCollapsed ? 'fixed left-0 top-0 h-full z-40' : 'fixed left-0 top-0 h-full z-40 md:relative'}
-        `}
+        className="bg-sidebar text-white p-4 h-screen overflow-hidden"
         aria-label="Navigation"
         data-testid="layout-sidebar"
       >
@@ -45,7 +45,7 @@ export const RootLayout: React.FC = () => {
       <div className="flex flex-col min-h-screen">
         {/* Header */}
         <header 
-          className="h-16 bg-white shadow flex items-center justify-between px-6"
+          className="h-16 bg-white shadow flex items-center justify-between px-6 border-l border-gray-200"
           role="banner"
           data-testid="layout-header"
         >
@@ -57,22 +57,13 @@ export const RootLayout: React.FC = () => {
 
         {/* Content */}
         <main 
-          className="flex-1 p-6"
+          className="flex-1 p-6 bg-white border-l border-gray-200"
           role="main"
           data-testid="layout-content"
         >
           <OutletRouter />
         </main>
       </div>
-
-      {/* Mobile Overlay */}
-      {sidebarCollapsed && (
-        <div 
-          className="fixed inset-0 bg-black bg-opacity-50 z-30 md:hidden"
-          onClick={handleToggleSidebar}
-          aria-hidden="true"
-        />
-      )}
     </div>
   );
 };

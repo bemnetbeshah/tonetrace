@@ -1,140 +1,227 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { KPICard } from '../KPICard';
+import KPICardDemo from '../KPICardDemo';
+import { TrendlineChart } from '../TrendlineChart';
+import TrendlineChartDemo from '../TrendlineChartDemo';
+import { TonePieChart } from '../TonePieChart';
+import TonePieChartDemo from '../TonePieChartDemo';
+import { UserGroupIcon, ChartBarIcon, AcademicCapIcon, ClockIcon } from '@heroicons/react/24/outline';
 
 /**
  * OutletRouter Component
- * Placeholder for routing content - shows demo dashboard
+ * Showcases our complete component library - KPICard, TrendlineChart, and TonePieChart
  */
 export const OutletRouter: React.FC = () => {
+  const [showDemo, setShowDemo] = useState<'kpi' | 'trendline' | 'tone-pie' | 'all'>('all');
+
+  // Sample data for trendline chart
+  const sampleData = [
+    { date: '2024-01-01', value: 0.65 },
+    { date: '2024-01-08', value: 0.72 },
+    { date: '2024-01-15', value: 0.68 },
+    { date: '2024-01-22', value: 0.75 },
+    { date: '2024-01-29', value: 0.71 },
+    { date: '2024-02-05', value: 0.78 },
+    { date: '2024-02-12', value: 0.82 },
+    { date: '2024-02-19', value: 0.79 },
+    { date: '2024-02-26', value: 0.85 },
+    { date: '2024-03-05', value: 0.88 }
+  ];
+
+  // Sample tone data
+  const toneData = [
+    { name: 'Formal', value: 45 },
+    { name: 'Neutral', value: 30 },
+    { name: 'Objective', value: 15 },
+    { name: 'Technical', value: 10 }
+  ];
+
   return (
     <div className="space-y-6">
       {/* Welcome Section */}
-      <div className="bg-white rounded-lg shadow-card p-6">
-        <h1 className="text-h1 text-text mb-4">Welcome to ToneTrace</h1>
-        <p className="text-body text-muted mb-6">
-          Your AI-powered writing analysis platform. Analyze tone, sentiment, and writing style 
-          to improve your communication.
+      <div className="bg-white rounded-lg border border-gray-200 p-6">
+        <h1 className="text-2xl font-bold text-gray-900 mb-4">ToneTrace Component Library</h1>
+        <p className="text-gray-600 mb-6">
+          Welcome to our modular component library! Below you'll find our three main components in action.
         </p>
-        <div className="flex gap-4">
-          <button className="btn-primary">
-            Start New Analysis
+        
+        {/* Component Selector */}
+        <div className="flex flex-wrap gap-2 mb-6">
+          <button 
+            onClick={() => setShowDemo('kpi')}
+            className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+              showDemo === 'kpi' 
+                ? 'bg-blue-600 text-white' 
+                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+            }`}
+          >
+            KPI Cards
           </button>
-          <button className="btn-secondary">
-            View Examples
+          <button 
+            onClick={() => setShowDemo('trendline')}
+            className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+              showDemo === 'trendline' 
+                ? 'bg-blue-600 text-white' 
+                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+            }`}
+          >
+            Trendline Charts
+          </button>
+          <button 
+            onClick={() => setShowDemo('tone-pie')}
+            className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+              showDemo === 'tone-pie' 
+                ? 'bg-blue-600 text-white' 
+                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+            }`}
+          >
+            Tone Pie Charts
+          </button>
+          <button 
+            onClick={() => setShowDemo('all')}
+            className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+              showDemo === 'all' 
+                ? 'bg-blue-600 text-white' 
+                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+            }`}
+          >
+            All Components
           </button>
         </div>
       </div>
 
-      {/* Quick Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-white rounded-lg shadow-card p-6">
-          <div className="flex items-center">
-            <div className="p-3 bg-primary-soft rounded-lg">
-              <svg className="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-              </svg>
+      {/* KPI Cards Section */}
+      {(showDemo === 'kpi' || showDemo === 'all') && (
+        <div className="space-y-6">
+          <div className="bg-white rounded-lg border border-gray-200 p-6">
+            <h2 className="text-xl font-semibold text-gray-900 mb-4">KPI Cards Component</h2>
+            <p className="text-gray-600 mb-6">
+              Modular summary tiles used across pages to display key performance indicators and metrics.
+            </p>
+            
+            {/* KPI Cards Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+              <KPICard
+                title="Total Students"
+                value="1,247"
+                icon={<UserGroupIcon className="w-5 h-5" />}
+                hint="Active enrollments"
+              />
+              <KPICard
+                title="Average Score"
+                value="87.3%"
+                icon={<ChartBarIcon className="w-5 h-5" />}
+                hint="Last 30 days"
+              />
+              <KPICard
+                title="Assignments"
+                value="24"
+                icon={<AcademicCapIcon className="w-5 h-5" />}
+                hint="This semester"
+              />
+              <KPICard
+                title="Response Time"
+                value="2.4h"
+                icon={<ClockIcon className="w-5 h-5" />}
+                hint="Average feedback"
+              />
             </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-muted">Total Analyses</p>
-              <p className="text-2xl font-semibold text-text">24</p>
+
+            {/* Interactive Demo */}
+            <div className="border-t pt-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Interactive Demo</h3>
+              <KPICardDemo />
             </div>
           </div>
         </div>
+      )}
 
-        <div className="bg-white rounded-lg shadow-card p-6">
-          <div className="flex items-center">
-            <div className="p-3 bg-success rounded-lg">
-              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
+      {/* Trendline Charts Section */}
+      {(showDemo === 'trendline' || showDemo === 'all') && (
+        <div className="space-y-6">
+          <div className="bg-white rounded-lg border border-gray-200 p-6">
+            <h2 className="text-xl font-semibold text-gray-900 mb-4">Trendline Charts Component</h2>
+            <p className="text-gray-600 mb-6">
+              Line charts for time series data like formality trends, sentiment analysis, and readability metrics.
+            </p>
+            
+            {/* Sample Chart */}
+            <div className="mb-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Sample Formality Trend</h3>
+              <TrendlineChart
+                data={sampleData}
+                label="Formality Trend Over Time"
+                height={300}
+              />
             </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-muted">Success Rate</p>
-              <p className="text-2xl font-semibold text-text">94%</p>
+
+            {/* Interactive Demo */}
+            <div className="border-t pt-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Interactive Demo</h3>
+              <TrendlineChartDemo />
             </div>
           </div>
         </div>
+      )}
 
-        <div className="bg-white rounded-lg shadow-card p-6">
-          <div className="flex items-center">
-            <div className="p-3 bg-warning rounded-lg">
-              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
+      {/* Tone Pie Charts Section */}
+      {(showDemo === 'tone-pie' || showDemo === 'all') && (
+        <div className="space-y-6">
+          <div className="bg-white rounded-lg border border-gray-200 p-6">
+            <h2 className="text-xl font-semibold text-gray-900 mb-4">Tone Pie Charts Component</h2>
+            <p className="text-gray-600 mb-6">
+              Pie charts showing tone distribution in writing analysis with interactive legends and tooltips.
+            </p>
+            
+            {/* Sample Chart */}
+            <div className="mb-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Sample Tone Distribution</h3>
+              <TonePieChart
+                data={toneData}
+                className="max-w-2xl mx-auto"
+              />
             </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-muted">Avg. Response</p>
-              <p className="text-2xl font-semibold text-text">2.3s</p>
+
+            {/* Interactive Demo */}
+            <div className="border-t pt-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Interactive Demo</h3>
+              <TonePieChartDemo />
             </div>
           </div>
         </div>
-      </div>
+      )}
 
-      {/* Recent Activity */}
-      <div className="bg-white rounded-lg shadow-card p-6">
-        <h2 className="text-h2 text-text mb-4">Recent Activity</h2>
-        <div className="space-y-4">
-          <div className="flex items-center p-4 border border-border rounded-lg">
-            <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center">
-              <span className="text-white text-sm font-medium">TB</span>
-            </div>
-            <div className="ml-4 flex-1">
-              <p className="text-sm font-medium text-text">Tone analysis completed</p>
-              <p className="text-xs text-muted">Email draft analyzed for professional tone</p>
-            </div>
-            <span className="text-xs text-muted">2 min ago</span>
+      {/* Component Documentation */}
+      <div className="bg-white rounded-lg border border-gray-200 p-6">
+        <h2 className="text-xl font-semibold text-gray-900 mb-4">Component Library Overview</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div>
+            <h3 className="text-lg font-semibold text-gray-900 mb-3">KPI Cards</h3>
+            <ul className="space-y-2 text-sm text-gray-700">
+              <li>• Three states: Loading, Error, Ready</li>
+              <li>• Flexible layout with title, icon, value, and hint</li>
+              <li>• Full accessibility support</li>
+              <li>• Responsive design</li>
+            </ul>
           </div>
-
-          <div className="flex items-center p-4 border border-border rounded-lg">
-            <div className="w-10 h-10 bg-success rounded-full flex items-center justify-center">
-              <span className="text-white text-sm font-medium">TB</span>
-            </div>
-            <div className="ml-4 flex-1">
-              <p className="text-sm font-medium text-text">Sentiment analysis finished</p>
-              <p className="text-xs text-muted">Customer feedback analyzed for sentiment</p>
-            </div>
-            <span className="text-xs text-muted">15 min ago</span>
+          <div>
+            <h3 className="text-lg font-semibold text-gray-900 mb-3">Trendline Charts</h3>
+            <ul className="space-y-2 text-sm text-gray-700">
+              <li>• Time series visualization</li>
+              <li>• Interactive tooltips</li>
+              <li>• Loading and empty states</li>
+              <li>• Built with Recharts</li>
+            </ul>
           </div>
-
-          <div className="flex items-center p-4 border border-border rounded-lg">
-            <div className="w-10 h-10 bg-warning rounded-full flex items-center justify-center">
-              <span className="text-white text-sm font-medium">TB</span>
-            </div>
-            <div className="ml-4 flex-1">
-              <p className="text-sm font-medium text-text">Style metrics generated</p>
-              <p className="text-xs text-muted">Blog post analyzed for readability and style</p>
-            </div>
-            <span className="text-xs text-muted">1 hour ago</span>
+          <div>
+            <h3 className="text-lg font-semibold text-gray-900 mb-3">Tone Pie Charts</h3>
+            <ul className="space-y-2 text-sm text-gray-700">
+              <li>• Tone distribution visualization</li>
+              <li>• Right-side legend with colors</li>
+              <li>• Interactive tooltips</li>
+              <li>• Empty state handling</li>
+            </ul>
           </div>
-        </div>
-      </div>
-
-      {/* Quick Actions */}
-      <div className="bg-white rounded-lg shadow-card p-6">
-        <h2 className="text-h2 text-text mb-4">Quick Actions</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <button className="p-4 border border-border rounded-lg hover:bg-surface-alt transition-colors text-left">
-            <div className="w-8 h-8 bg-primary rounded-lg mb-3"></div>
-            <h3 className="text-h3 mb-2">New Analysis</h3>
-            <p className="text-body text-muted">Start analyzing your text</p>
-          </button>
-
-          <button className="p-4 border border-border rounded-lg hover:bg-surface-alt transition-colors text-left">
-            <div className="w-8 h-8 bg-success rounded-lg mb-3"></div>
-            <h3 className="text-h3 mb-2">View Reports</h3>
-            <p className="text-body text-muted">Check your analysis history</p>
-          </button>
-
-          <button className="p-4 border border-border rounded-lg hover:bg-surface-alt transition-colors text-left">
-            <div className="w-8 h-8 bg-warning rounded-lg mb-3"></div>
-            <h3 className="text-h3 mb-2">Templates</h3>
-            <p className="text-body text-muted">Use pre-built analysis templates</p>
-          </button>
-
-          <button className="p-4 border border-border rounded-lg hover:bg-surface-alt transition-colors text-left">
-            <div className="w-8 h-8 bg-primary-soft rounded-lg mb-3"></div>
-            <h3 className="text-h3 mb-2">Help & Docs</h3>
-            <p className="text-body text-muted">Learn how to use ToneTrace</p>
-          </button>
         </div>
       </div>
     </div>

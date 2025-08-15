@@ -1,9 +1,8 @@
 import React from 'react';
 import { 
   HomeIcon, 
-  ChartBarIcon, 
-  DocumentTextIcon, 
-  CogIcon,
+  UsersIcon, 
+  ClipboardDocumentListIcon,
   Bars3Icon,
   XMarkIcon
 } from '@heroicons/react/24/outline';
@@ -15,21 +14,43 @@ interface SidebarNavProps {
 
 /**
  * SidebarNav Component
- * Navigation sidebar with collapsible behavior
+ * Primary navigation sidebar with collapsible behavior
  */
 export const SidebarNav: React.FC<SidebarNavProps> = ({ 
   collapsed, 
   onToggleSidebar 
 }) => {
+  // Navigation items matching the specification
   const navigationItems = [
-    { name: 'Dashboard', icon: HomeIcon, href: '/', current: true },
-    { name: 'Analysis', icon: ChartBarIcon, href: '/analysis', current: false },
-    { name: 'Reports', icon: DocumentTextIcon, href: '/reports', current: false },
-    { name: 'Settings', icon: CogIcon, href: '/settings', current: false },
+    { 
+      icon: HomeIcon, 
+      label: 'Dashboard', 
+      to: '/', 
+      testId: 'nav-dashboard' 
+    },
+    { 
+      icon: UsersIcon, 
+      label: 'Students', 
+      to: '/students', 
+      testId: 'nav-students' 
+    },
+    { 
+      icon: ClipboardDocumentListIcon, 
+      label: 'Assignments', 
+      to: '/assignments', 
+      testId: 'nav-assignments' 
+    },
   ];
 
+  // Simple route matching logic - can be enhanced with React Router later
+  const isActiveRoute = (path: string) => {
+    // For now, just check if we're on the root path for dashboard
+    // This will be enhanced when proper routing is implemented
+    return path === '/' && window.location.pathname === '/';
+  };
+
   return (
-    <div className="h-full flex flex-col">
+    <div className={`h-full flex flex-col ${collapsed ? 'sidebar-collapsed' : ''} sidebar-container`}>
       {/* Header with Toggle Button */}
       <div className="flex items-center justify-between mb-8">
         {!collapsed && (
@@ -37,7 +58,7 @@ export const SidebarNav: React.FC<SidebarNavProps> = ({
         )}
         <button
           onClick={onToggleSidebar}
-          className="p-2 rounded-md hover:bg-sidebar-hover transition-colors"
+          className="p-2 rounded-md hover:bg-[color:var(--sidebarHover)] transition-colors"
           aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
           data-testid="sidebar-toggle"
         >
@@ -50,27 +71,38 @@ export const SidebarNav: React.FC<SidebarNavProps> = ({
       </div>
 
       {/* Navigation Links */}
-      <nav className="flex-1">
+      <nav className="flex-1" role="navigation">
         <ul className="space-y-2">
           {navigationItems.map((item) => {
             const Icon = item.icon;
+            const isActive = isActiveRoute(item.to);
+            
             return (
-              <li key={item.name}>
+              <li key={item.label}>
                 <a
-                  href={item.href}
+                  href={item.to}
                   className={`
-                    flex items-center px-3 py-2 rounded-md text-sm font-medium transition-colors
-                    ${item.current 
-                      ? 'bg-primary text-white' 
-                      : 'text-gray-300 hover:bg-sidebar-hover hover:text-white'
-                    }
+                    flex items-center gap-3 px-3 py-2 rounded hover:bg-[color:var(--sidebarHover)]
+                    ${isActive ? 'sidebar-active' : 'text-gray-300 hover:text-white'}
                     ${collapsed ? 'justify-center' : 'justify-start'}
+                    transition-colors
                   `}
-                  aria-current={item.current ? 'page' : undefined}
+                  aria-current={isActive ? 'page' : undefined}
+                  data-testid={item.testId}
                 >
-                  <Icon className="h-5 w-5 flex-shrink-0" />
+                  {/* Active state left strip */}
+                  {isActive && (
+                    <div className="sidebar-active-strip"></div>
+                  )}
+                  
+                  {/* Icon */}
+                  <Icon className="h-5 w-5 sidebar-icon" />
+                  
+                  {/* Label - hidden at <= 360px when collapsed */}
                   {!collapsed && (
-                    <span className="ml-3">{item.name}</span>
+                    <span className="sidebar-label">
+                      {item.label}
+                    </span>
                   )}
                 </a>
               </li>

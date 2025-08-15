@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   MagnifyingGlassIcon, 
-  BellIcon,
   UserCircleIcon,
   Bars3Icon
 } from '@heroicons/react/24/outline';
@@ -13,14 +12,30 @@ interface TopHeaderProps {
 
 /**
  * TopHeader Component
- * Header with search, notifications, and user menu
+ * Page title, search, and profile stub
  */
 export const TopHeader: React.FC<TopHeaderProps> = ({
   onToggleSidebar,
   onSearchSubmit
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
-  const [showUserMenu, setShowUserMenu] = useState(false);
+  const [isSearchFocused, setIsSearchFocused] = useState(false);
+  const [showProfileMenu, setShowProfileMenu] = useState(false);
+  const [currentTitle, setCurrentTitle] = useState('Dashboard');
+
+  // Simple route-based title system
+  useEffect(() => {
+    const pathname = window.location.pathname;
+    if (pathname === '/') {
+      setCurrentTitle('Dashboard');
+    } else if (pathname === '/students') {
+      setCurrentTitle('Students');
+    } else if (pathname === '/assignments') {
+      setCurrentTitle('Assignments');
+    } else {
+      setCurrentTitle('Dashboard');
+    }
+  }, []);
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,15 +45,21 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
     }
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Escape') {
-      setShowUserMenu(false);
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
+    // Client filter on current list - no network request
+    if (e.target.value.trim()) {
+      onSearchSubmit(e.target.value.trim());
     }
+  };
+
+  const handleProfileClick = () => {
+    setShowProfileMenu(!showProfileMenu);
   };
 
   return (
     <div className="flex items-center justify-between w-full">
-      {/* Left Section - Mobile Menu Button */}
+      {/* Left Section - Mobile Menu Button and Title */}
       <div className="flex items-center">
         <button
           onClick={onToggleSidebar}
@@ -49,9 +70,16 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
           <Bars3Icon className="h-6 w-6 text-gray-600" />
         </button>
         
-        {/* Breadcrumb or Page Title */}
-        <div className="ml-4">
-          <h2 className="text-lg font-semibold text-gray-900">Dashboard</h2>
+        {/* Page Title - hidden on small screens when search is focused */}
+        <div className={`ml-4 transition-opacity duration-200 ${
+          isSearchFocused ? 'md:hidden' : 'block'
+        }`}>
+          <h2 
+            className="text-lg font-semibold text-gray-900"
+            data-testid="header-title"
+          >
+            {currentTitle}
+          </h2>
         </div>
       </div>
 
@@ -62,80 +90,49 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
             <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
             <input
               type="text"
-              placeholder="Search analysis, reports..."
+              placeholder="Search"
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={handleSearchChange}
+              onFocus={() => setIsSearchFocused(true)}
+              onBlur={() => setIsSearchFocused(false)}
               className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+              role="searchbox"
               aria-label="Search"
+              data-testid="header-search"
             />
           </div>
         </form>
       </div>
 
-      {/* Right Section - Notifications and User Menu */}
-      <div className="flex items-center space-x-4">
-        {/* Notifications */}
+      {/* Right Section - Profile Avatar */}
+      <div className="flex items-center">
         <button
-          className="p-2 rounded-md hover:bg-gray-100 transition-colors relative"
-          aria-label="View notifications"
+          onClick={handleProfileClick}
+          className="flex items-center justify-center w-8 h-8 rounded-full bg-gray-200 hover:bg-gray-300 transition-colors"
+          aria-label="Profile menu"
+          data-testid="header-avatar"
         >
-          <BellIcon className="h-6 w-6 text-gray-600" />
-          <span className="absolute top-1 right-1 w-2 h-2 bg-danger rounded-full"></span>
+          <UserCircleIcon className="h-6 w-6 text-gray-600" />
         </button>
 
-        {/* User Menu */}
-        <div className="relative">
-          <button
-            onClick={() => setShowUserMenu(!showUserMenu)}
-            onKeyDown={handleKeyDown}
-            className="flex items-center space-x-2 p-2 rounded-md hover:bg-gray-100 transition-colors"
-            aria-label="User menu"
-            aria-expanded={showUserMenu}
-            aria-haspopup="true"
+        {/* Simple Profile Stub Menu */}
+        {showProfileMenu && (
+          <div 
+            className="absolute right-6 top-16 w-48 bg-white rounded-md shadow-lg py-1 z-50 border border-gray-200"
+            role="menu"
+            aria-orientation="vertical"
           >
-            <UserCircleIcon className="h-8 w-8 text-gray-600" />
-            <span className="hidden md:block text-sm font-medium text-gray-700">
-              Admin User
-            </span>
-          </button>
-
-          {/* Dropdown Menu */}
-          {showUserMenu && (
-            <div 
-              className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50"
-              role="menu"
-              aria-orientation="vertical"
-              aria-labelledby="user-menu-button"
-            >
-              <a
-                href="/profile"
-                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                role="menuitem"
-              >
-                Your Profile
-              </a>
-              <a
-                href="/settings"
-                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                role="menuitem"
-              >
-                Settings
-              </a>
-              <div className="border-t border-gray-100"></div>
-              <button
-                onClick={() => {
-                  // TODO: Implement logout
-                  console.log('Logout clicked');
-                  setShowUserMenu(false);
-                }}
-                className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                role="menuitem"
-              >
-                Sign out
-              </button>
+            <div className="px-4 py-2 text-sm text-gray-500 border-b border-gray-100">
+              Profile Menu
             </div>
-          )}
-        </div>
+            <button
+              onClick={() => setShowProfileMenu(false)}
+              className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+            >
+              Close Menu
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
