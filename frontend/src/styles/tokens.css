@@ -1,0 +1,85 @@
+/* Design System CSS Custom Properties */
+:root {
+  /* Colors */
+  --color-primary: #6C5CE7;
+  --color-primary-soft: #A78BFA;
+  --color-surface: #FFFFFF;
+  --color-surface-alt: #F8FAFC;
+  --color-text: #0F172A;
+  --color-muted: #64748B;
+  --color-border: #E2E8F0;
+  --color-sidebar-bg: #0B1020;
+  --color-sidebar-hover: #11172B;
+  --color-success: #10B981;
+  --color-warning: #F59E0B;
+  --color-danger: #EF4444;
+
+  /* Border Radius */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+
+  /* Shadows */
+  --shadow-card: 0 8px 20px rgba(2,6,23,.06);
+
+  /* Spacing Scale */
+  --spacing-0: 0px;
+  --spacing-4: 4px;
+  --spacing-8: 8px;
+  --spacing-12: 12px;
+  --spacing-16: 16px;
+  --spacing-20: 20px;
+  --spacing-24: 24px;
+  --spacing-28: 28px;
+  --spacing-32: 32px;
+}
+
+/* Utility classes using CSS custom properties */
+.bg-primary { background-color: var(--color-primary); }
+.bg-primary-soft { background-color: var(--color-primary-soft); }
+.bg-surface { background-color: var(--color-surface); }
+.bg-surface-alt { background-color: var(--color-surface-alt); }
+.bg-sidebar { background-color: var(--color-sidebar-bg); }
+.bg-sidebar-hover { background-color: var(--color-sidebar-hover); }
+.bg-success { background-color: var(--color-success); }
+.bg-warning { background-color: var(--color-warning); }
+.bg-danger { background-color: var(--color-danger); }
+
+.text-primary { color: var(--color-primary); }
+.text-primary-soft { color: var(--color-primary-soft); }
+.text-surface { color: var(--color-surface); }
+.text-text { color: var(--color-text); }
+.text-muted { color: var(--color-muted); }
+.text-success { color: var(--color-success); }
+.text-warning { color: var(--color-warning); }
+.text-danger { color: var(--color-danger); }
+
+.border-primary { border-color: var(--color-primary); }
+.border-border { border-color: var(--color-border); }
+
+.rounded-sm { border-radius: var(--radius-sm); }
+.rounded-md { border-radius: var(--radius-md); }
+.rounded-lg { border-radius: var(--radius-lg); }
+
+.shadow-card { box-shadow: var(--shadow-card); }
+
+/* Spacing utilities */
+.p-0 { padding: var(--spacing-0); }
+.p-4 { padding: var(--spacing-4); }
+.p-8 { padding: var(--spacing-8); }
+.p-12 { padding: var(--spacing-12); }
+.p-16 { padding: var(--spacing-16); }
+.p-20 { padding: var(--spacing-20); }
+.p-24 { padding: var(--spacing-24); }
+.p-28 { padding: var(--spacing-28); }
+.p-32 { padding: var(--spacing-32); }
+
+.m-0 { margin: var(--spacing-0); }
+.m-4 { margin: var(--spacing-4); }
+.m-8 { margin: var(--spacing-8); }
+.m-12 { margin: var(--spacing-12); }
+.m-16 { margin: var(--spacing-16); }
+.m-20 { margin: var(--spacing-20); }
+.m-24 { margin: var(--spacing-24); }
+.m-28 { margin: var(--spacing-28); }
+.m-32 { margin: var(--spacing-32); } 

@@ -1,0 +1,77 @@
+/* Import our custom design tokens */
+@import './tokens.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Base styles using our tokens */
+@layer base {
+  body {
+    @apply bg-surface text-text;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+      'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+      sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1 {
+    @apply text-h1;
+  }
+
+  h2 {
+    @apply text-h2;
+  }
+
+  h3 {
+    @apply text-h3;
+  }
+
+  p {
+    @apply text-body;
+  }
+}
+
+/* Component styles using our tokens */
+@layer components {
+  .btn {
+    @apply px-6 py-3 rounded-md font-medium transition-colors duration-200;
+  }
+
+  .btn-primary {
+    @apply btn bg-primary text-surface hover:bg-primary-soft;
+  }
+
+  .btn-secondary {
+    @apply btn bg-surface border border-border text-text hover:bg-surface-alt;
+  }
+
+  .btn-success {
+    @apply btn bg-success text-surface hover:opacity-90;
+  }
+
+  .btn-warning {
+    @apply btn bg-warning text-surface hover:opacity-90;
+  }
+
+  .btn-danger {
+    @apply btn bg-danger text-surface hover:opacity-90;
+  }
+
+  .card {
+    @apply bg-surface rounded-lg border border-border shadow-card p-6;
+  }
+
+  .input {
+    @apply w-full px-4 py-2 border border-border rounded-md text-body focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent;
+  }
+
+  .sidebar {
+    @apply bg-sidebar text-surface;
+  }
+
+  .sidebar-item {
+    @apply px-4 py-2 hover:bg-sidebar-hover transition-colors duration-200;
+  }
+} 
