@@ -1,11 +1,9 @@
 import React from 'react';
 import { 
-  HomeIcon, 
-  UsersIcon, 
-  ClipboardDocumentListIcon,
   Bars3Icon,
   XMarkIcon
 } from '@heroicons/react/24/outline';
+import { NAVIGATION_ITEMS, isRouteActive, useRouteState } from '../../routing';
 
 interface SidebarNavProps {
   collapsed: boolean;
@@ -20,34 +18,8 @@ export const SidebarNav: React.FC<SidebarNavProps> = ({
   collapsed, 
   onToggleSidebar 
 }) => {
-  // Navigation items matching the specification
-  const navigationItems = [
-    { 
-      icon: HomeIcon, 
-      label: 'Dashboard', 
-      to: '/', 
-      testId: 'nav-dashboard' 
-    },
-    { 
-      icon: UsersIcon, 
-      label: 'Students', 
-      to: '/students', 
-      testId: 'nav-students' 
-    },
-    { 
-      icon: ClipboardDocumentListIcon, 
-      label: 'Assignments', 
-      to: '/assignments', 
-      testId: 'nav-assignments' 
-    },
-  ];
-
-  // Simple route matching logic - can be enhanced with React Router later
-  const isActiveRoute = (path: string) => {
-    // For now, just check if we're on the root path for dashboard
-    // This will be enhanced when proper routing is implemented
-    return path === '/' && window.location.pathname === '/';
-  };
+  // Use the routing hook for current route state
+  const { currentPathname } = useRouteState();
 
   return (
     <div className={`h-full flex flex-col ${collapsed ? 'sidebar-collapsed' : ''} sidebar-container`}>
@@ -73,9 +45,9 @@ export const SidebarNav: React.FC<SidebarNavProps> = ({
       {/* Navigation Links */}
       <nav className="flex-1" role="navigation">
         <ul className="space-y-2">
-          {navigationItems.map((item) => {
+          {NAVIGATION_ITEMS.map((item) => {
             const Icon = item.icon;
-            const isActive = isActiveRoute(item.to);
+            const isActive = isRouteActive(item.to, currentPathname);
             
             return (
               <li key={item.label}>

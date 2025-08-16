@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { 
   MagnifyingGlassIcon, 
   UserCircleIcon,
   Bars3Icon
 } from '@heroicons/react/24/outline';
+import { useRouteState } from '../../routing';
 
 interface TopHeaderProps {
   onToggleSidebar: () => void;
@@ -21,21 +22,9 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
-  const [currentTitle, setCurrentTitle] = useState('Dashboard');
-
-  // Simple route-based title system
-  useEffect(() => {
-    const pathname = window.location.pathname;
-    if (pathname === '/') {
-      setCurrentTitle('Dashboard');
-    } else if (pathname === '/students') {
-      setCurrentTitle('Students');
-    } else if (pathname === '/assignments') {
-      setCurrentTitle('Assignments');
-    } else {
-      setCurrentTitle('Dashboard');
-    }
-  }, []);
+  
+  // Use the routing hook for reactive page titles
+  const { currentTitle } = useRouteState();
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
