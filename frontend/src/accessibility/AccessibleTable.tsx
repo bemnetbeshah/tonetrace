@@ -64,20 +64,19 @@ export const AccessibleTable: React.FC<AccessibleTableProps> = ({
 
   return (
     <div className={`accessible-table ${className}`}>
-      {caption && (
-        <caption
-          id={captionId}
-          className="mb-2 text-sm font-medium text-slate-900 text-left"
-        >
-          {caption}
-        </caption>
-      )}
-      
       <table
         {...tableProps}
         aria-describedby={captionId}
         className="w-full border-collapse"
       >
+        {caption && (
+          <caption
+            id={captionId}
+            className="mb-2 text-sm font-medium text-slate-900 text-left"
+          >
+            {caption}
+          </caption>
+        )}
         {children}
       </table>
     </div>

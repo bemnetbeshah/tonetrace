@@ -104,7 +104,7 @@ export const AccessibleSearch: React.FC<AccessibleSearchProps> = ({
     placeholder,
     value,
     onChange: handleChange,
-    onKeyDown,
+    onKeyDown: handleKeyDown,
     ariaLabel,
     ariaDescribedBy,
     testId: `${testId}-input`

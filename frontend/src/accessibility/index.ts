@@ -1,5 +1,5 @@
 // Export all accessibility utilities and components
-export * from './accessibilityUtils';
+export * from './accessibilityUtils.tsx';
 export * from './useKeyboardNavigation';
 
 // Export accessible components
