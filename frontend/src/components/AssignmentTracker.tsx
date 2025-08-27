@@ -38,10 +38,10 @@ export const AssignmentTracker: React.FC<AssignmentTrackerProps> = ({
         actionSlot={
           <button
             onClick={() => setIsModalOpen(true)}
-            className="bg-brand-600 hover:bg-brand-700 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center gap-2"
+            className="bg-brand-600 hover:bg-brand-700 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center gap-2 mx-auto"
           >
             <Plus className="w-4 h-4" />
-            Create New Assignment
+            New Assignment
           </button>
         }
       />
@@ -136,7 +136,7 @@ export const AssignmentTracker: React.FC<AssignmentTrackerProps> = ({
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-xl p-6 w-full max-w-md mx-4">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">
-              Create New Assignment
+              New Assignment
             </h3>
             <p className="text-gray-600 mb-6">
               Assignment creation functionality will be implemented here.

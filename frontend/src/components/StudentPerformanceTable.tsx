@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { Search, TrendingUp, TrendingDown, Minus, Eye } from 'lucide-react';
+import { Search, TrendingUp, TrendingDown, Minus } from 'lucide-react';
 import { Student } from '../types/models';
 import { cn } from '../lib/ui';
 
@@ -126,11 +126,11 @@ export const StudentPerformanceTable: React.FC<StudentPerformanceTableProps> = (
   const getGrowthIcon = (growth: 'up' | 'down' | 'flat') => {
     switch (growth) {
       case 'up':
-        return <TrendingUp className="w-4 h-4 text-green-600" />;
+        return <TrendingUp className="w-5 h-5 text-green-600" />;
       case 'down':
-        return <TrendingDown className="w-4 h-4 text-red-600" />;
+        return <TrendingDown className="w-5 h-5 text-red-600" />;
       case 'flat':
-        return <Minus className="w-4 h-4 text-gray-500" />;
+        return <Minus className="w-5 h-5 text-gray-500" />;
     }
   };
 
@@ -180,8 +180,14 @@ export const StudentPerformanceTable: React.FC<StudentPerformanceTableProps> = (
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Latest Assignment
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th 
+                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                onClick={() => handleSort('growth')}
+              >
                 Growth
+                {sortField === 'growth' && (
+                  <span className="ml-1">{sortDirection === 'asc' ? '↑' : '↓'}</span>
+                )}
               </th>
               <th 
                 className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
@@ -204,14 +210,16 @@ export const StudentPerformanceTable: React.FC<StudentPerformanceTableProps> = (
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Alerts
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Action
-              </th>
+
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
             {filteredAndSortedStudents.map((student) => (
-              <tr key={student.id} className="hover:bg-gray-50">
+              <tr 
+                key={student.id} 
+                className="hover:bg-gray-50 cursor-pointer transition-colors duration-150"
+                onClick={() => onViewStudent(student.id)}
+              >
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="flex items-center">
                     <div className="flex-shrink-0 h-8 w-8">
@@ -231,8 +239,23 @@ export const StudentPerformanceTable: React.FC<StudentPerformanceTableProps> = (
                   {student.latestAssignment}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="flex items-center">
+                  <div className={cn(
+                    "flex items-center gap-2 px-3 py-1 rounded-full",
+                    student.growth === 'up' ? "bg-green-50 border border-green-200" : 
+                    student.growth === 'down' ? "bg-red-50 border border-red-200" : 
+                    "bg-gray-50 border border-gray-200"
+                  )}>
                     {getGrowthIcon(student.growth)}
+                    <span className={cn(
+                      "text-sm font-medium",
+                      student.growth === 'up' ? "text-green-700" : 
+                      student.growth === 'down' ? "text-red-700" : 
+                      "text-gray-700"
+                    )}>
+                      {student.growth === 'up' ? 'Improving' : 
+                       student.growth === 'down' ? 'Declining' : 
+                       'Stable'}
+                    </span>
                   </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
@@ -253,15 +276,7 @@ export const StudentPerformanceTable: React.FC<StudentPerformanceTableProps> = (
                     ))}
                   </div>
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                  <button
-                    onClick={() => onViewStudent(student.id)}
-                    className="text-brand-600 hover:text-brand-900 flex items-center gap-1"
-                  >
-                    <Eye className="w-4 h-4" />
-                    View
-                  </button>
-                </td>
+
               </tr>
             ))}
           </tbody>

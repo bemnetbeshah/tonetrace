@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { getStudentById } from '../api/mockApi';
+import { fetchStudentDetail } from '../data/adapters';
 import { Student } from '../types';
 import { cn } from '../lib/ui';
 
@@ -13,6 +13,8 @@ interface Tab {
 export const StudentDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [student, setStudent] = useState<Student | null>(null);
+  const [submissions, setSubmissions] = useState<any[]>([]);
+  const [analyses, setAnalyses] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('overview');
 
@@ -21,8 +23,10 @@ export const StudentDetail: React.FC = () => {
       if (!id) return;
       try {
         setLoading(true);
-        const data = await getStudentById(id);
-        setStudent(data);
+        const data = await fetchStudentDetail(id);
+        setStudent(data.student);
+        setSubmissions(data.submissions);
+        setAnalyses(data.analyses);
       } catch (error) {
         console.error('Failed to fetch student:', error);
       } finally {

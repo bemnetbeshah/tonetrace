@@ -198,7 +198,7 @@ export const Dashboard: React.FC = () => {
     .slice(0, 6);
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Hero Section */}
         <DashboardHero data={dashboardSummary} students={students} />
@@ -255,7 +255,7 @@ export const Dashboard: React.FC = () => {
                 <CardHeader>
                   <CardTitle>Average Readability Over Time</CardTitle>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="flex justify-center items-end min-h-[300px]">
                   <LineChart
                     data={readabilityTrendData}
                     height={300}
@@ -270,7 +270,7 @@ export const Dashboard: React.FC = () => {
                 <CardHeader>
                   <CardTitle>Grammar Issues by Type</CardTitle>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="flex justify-center items-end min-h-[300px]">
                   <BarChart
                     data={grammarIssuesData}
                     height={300}
@@ -285,7 +285,7 @@ export const Dashboard: React.FC = () => {
                 <CardHeader>
                   <CardTitle>Tone Distribution</CardTitle>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="flex justify-center items-end min-h-[300px]">
                   <DonutChart
                     data={toneDistributionData}
                     height={300}

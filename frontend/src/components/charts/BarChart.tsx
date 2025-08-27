@@ -47,14 +47,15 @@ export const BarChart: React.FC<BarChartProps> = ({
   const maxValue = Math.max(...allValues);
   const minValue = Math.min(...allValues, 0);
 
-  // Padding for chart area
-  const padding = { top: 20, right: 20, bottom: 60, left: 80 };
+  // Padding for chart area - increased right padding to prevent bars from going over the edge
+  const padding = { top: 20, right: 40, bottom: 60, left: 80 };
   const chartWidth = width - padding.left - padding.right;
   const chartHeight = height - padding.top - padding.bottom;
 
   // Scale functions
   const xScale = (index: number) => {
-    return padding.left + (index / (data.length - 1)) * chartWidth;
+    // Ensure bars are properly spaced within the chart area with better boundaries
+    return padding.left + (index + 0.5) * (chartWidth / data.length);
   };
 
   const yScale = (value: number) => {
@@ -62,15 +63,19 @@ export const BarChart: React.FC<BarChartProps> = ({
     return padding.top + chartHeight - ((value - minValue) / range) * chartHeight;
   };
 
-  const barWidth = chartWidth / data.length * 0.8;
-  const barSpacing = chartWidth / data.length * 0.2;
+  // Calculate bar width with proper spacing - ensure bars don't overlap boundaries
+  const availableWidth = chartWidth / data.length;
+  const barWidth = Math.min(availableWidth * 0.6, 35); // Reduced from 0.7 to 0.6 and max width to 35px
+  const barSpacing = (availableWidth - barWidth) / 2;
 
   // Generate bars
   const generateBars = () => {
     const bars: JSX.Element[] = [];
 
     data.forEach((item, itemIndex) => {
-      const x = xScale(itemIndex) - barWidth / 2;
+      // Ensure bar position is within chart boundaries
+      let x = xScale(itemIndex) - barWidth / 2;
+      x = Math.max(padding.left + 2, Math.min(x, width - padding.right - barWidth - 2));
       
       if (stack) {
         // Stacked bars
@@ -125,7 +130,9 @@ export const BarChart: React.FC<BarChartProps> = ({
         const groupWidth = barWidth / allSeriesNames.length;
         item.values.forEach((value, valueIndex) => {
           const seriesIndex = allSeriesNames.indexOf(value.series);
-          const barX = x + seriesIndex * groupWidth;
+          let barX = x + seriesIndex * groupWidth;
+          // Ensure grouped bars are also within boundaries
+          barX = Math.max(padding.left + 2, Math.min(barX, width - padding.right - groupWidth - 2));
           const barHeight = Math.abs(yScale(value.value) - yScale(0));
           const y = value.value >= 0 ? yScale(value.value) : yScale(0);
           
@@ -222,11 +229,11 @@ export const BarChart: React.FC<BarChartProps> = ({
           <text
             key={index}
             x={xScale(index)}
-            y={height - padding.bottom + 20}
+            y={height - padding.bottom + 35}
             textAnchor="middle"
             fontSize="12"
             fill="#6B7280"
-            transform={`rotate(-45 ${xScale(index)} ${height - padding.bottom + 20})`}
+            transform={`rotate(-45 ${xScale(index)} ${height - padding.bottom + 35})`}
           >
             {item.label}
           </text>

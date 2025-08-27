@@ -197,26 +197,7 @@ export const DonutChart: React.FC<DonutChartProps> = ({
           strokeWidth="1"
         />
         
-        {/* Center text */}
-        <text
-          x={centerX}
-          y={centerY - 10}
-          textAnchor="middle"
-          fontSize="16"
-          fontWeight="bold"
-          fill="#374151"
-        >
-          {total}
-        </text>
-        <text
-          x={centerX}
-          y={centerY + 10}
-          textAnchor="middle"
-          fontSize="12"
-          fill="#6B7280"
-        >
-          Total
-        </text>
+
       </svg>
 
       {/* Legend */}

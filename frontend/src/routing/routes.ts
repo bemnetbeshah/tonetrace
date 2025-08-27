@@ -26,7 +26,21 @@ export const ROUTES: RouteConfig[] = [
     element: 'DashboardPage',
     icon: HomeIcon,
     testId: 'nav-dashboard',
-    isActive: (pathname: string) => pathname === '/'
+    isActive: (pathname: string) => {
+      const normalizedPathname = pathname.replace(/\/$/, '') || '/';
+      return normalizedPathname === '/' || normalizedPathname === '';
+    }
+  },
+  {
+    path: '/dashboard',
+    title: 'Class Dashboard',
+    element: 'DashboardPage',
+    icon: HomeIcon,
+    testId: 'nav-dashboard',
+    isActive: (pathname: string) => {
+      const normalizedPathname = pathname.replace(/\/$/, '') || '/';
+      return normalizedPathname === '/dashboard' || normalizedPathname === '/';
+    }
   },
   {
     path: '/students',
@@ -106,12 +120,16 @@ export const isRouteActive = (path: string, pathname: string): boolean => {
     return route.isActive(pathname);
   }
   
-  // Default logic for static routes
-  if (path === '/') {
-    return pathname === '/';
+  // Normalize pathname to handle trailing slashes
+  const normalizedPathname = pathname.replace(/\/$/, '') || '/';
+  
+  // Special handling for dashboard routes
+  if (path === '/' || path === '/dashboard') {
+    return normalizedPathname === '/' || normalizedPathname === '/dashboard' || normalizedPathname === '';
   }
   
-  return pathname.startsWith(path);
+  // Default logic for other static routes
+  return normalizedPathname.startsWith(path);
 };
 
 // Export route constants for easy access
