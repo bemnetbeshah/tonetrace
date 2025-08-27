@@ -7,6 +7,18 @@ export default {
   theme: {
     extend: {
       colors: {
+        brand: {
+          50: '#f0f9ff',
+          100: '#e0f2fe',
+          200: '#bae6fd',
+          300: '#7dd3fc',
+          400: '#38bdf8',
+          500: '#0ea5e9',
+          600: '#0284c7',
+          700: '#0369a1',
+          800: '#075985',
+          900: '#0c4a6e',
+        },
         primary: {
           DEFAULT: '#6C5CE7',
           soft: '#A78BFA',
@@ -29,6 +41,8 @@ export default {
         danger: '#EF4444',
       },
       borderRadius: {
+        'xl': '1rem',
+        '2xl': '1.25rem',
         'sm': '8px',
         'md': '12px',
         'lg': '16px',
@@ -59,6 +73,14 @@ export default {
         'md': '768px',
         'lg': '1024px',
         'xl': '1280px',
+        '2xl': '1440px',
+      },
+      container: {
+        center: true,
+        padding: '1rem',
+        screens: {
+          '2xl': '1280px',
+        },
       },
     },
   },
