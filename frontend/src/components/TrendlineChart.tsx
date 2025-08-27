@@ -1,5 +1,5 @@
 import React from 'react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { LineChart } from './charts/LineChart';
 
 export interface TrendlineDataPoint {
   date: string;
@@ -47,28 +47,14 @@ export const TrendlineChart: React.FC<TrendlineChartProps> = ({
     );
   }
 
-  // Format data for Recharts
+  // Transform data for our LineChart
   const chartData = data.map(point => ({
-    ...point,
-    // Ensure date is properly formatted for display
-    formattedDate: new Date(point.date).toLocaleDateString('en-US', {
+    x: new Date(point.date).toLocaleDateString('en-US', {
       month: 'short',
       day: 'numeric'
-    })
+    }),
+    y: point.value
   }));
-
-  // Custom tooltip component
-  const CustomTooltip = ({ active, payload, label }: any) => {
-    if (active && payload && payload.length) {
-      return (
-        <div className="bg-white p-3 border border-gray-200 rounded-lg shadow-lg">
-          <p className="text-gray-600 text-sm">{`Date: ${label}`}</p>
-          <p className="text-gray-900 font-medium">{`Value: ${payload[0].value}`}</p>
-        </div>
-      );
-    }
-    return null;
-  };
 
   return (
     <div
@@ -83,34 +69,15 @@ export const TrendlineChart: React.FC<TrendlineChartProps> = ({
         </h3>
       )}
       
-      <ResponsiveContainer width="100%" height={height}>
-        <LineChart data={chartData}>
-          <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-          <XAxis
-            dataKey="formattedDate"
-            stroke="#6b7280"
-            fontSize={12}
-            tickLine={false}
-            axisLine={false}
-          />
-          <YAxis
-            stroke="#6b7280"
-            fontSize={12}
-            tickLine={false}
-            axisLine={false}
-            tickFormatter={(value) => value.toFixed(1)}
-          />
-          <Tooltip content={<CustomTooltip />} />
-          <Line
-            type="monotone"
-            dataKey="value"
-            stroke="#6c5ce7"
-            strokeWidth={2}
-            dot={{ fill: '#6c5ce7', strokeWidth: 2, r: 4 }}
-            activeDot={{ r: 6, stroke: '#6c5ce7', strokeWidth: 2 }}
-          />
-        </LineChart>
-      </ResponsiveContainer>
+      <div className="flex items-center justify-center" style={{ height: `${height}px` }}>
+        <LineChart
+          data={chartData}
+          height={height - 40}
+          width={300}
+          color="#3b82f6"
+          strokeWidth={2}
+        />
+      </div>
     </div>
   );
 };

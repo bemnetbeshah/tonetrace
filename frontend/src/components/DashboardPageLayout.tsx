@@ -222,7 +222,7 @@ export const DashboardPageLayout: React.FC<DashboardPageLayoutProps> = ({
         
         <KPICard
           title="Assignments Submitted"
-          value={data.kpis.assignmentsSubmitted.toString()}
+          value={Math.round(data.kpis.assignmentsSubmitted).toString()}
           hint="Total submissions"
           state="ready"
         />

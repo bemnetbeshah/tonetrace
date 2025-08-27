@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from 'react';
+import { Outlet } from 'react-router-dom';
 import { SidebarNav } from './SidebarNav';
 import { TopHeader } from './TopHeader';
-import { OutletRouter } from './OutletRouter';
 
 /**
  * RootLayout Component
@@ -61,7 +61,7 @@ export const RootLayout: React.FC = () => {
           role="main"
           data-testid="layout-content"
         >
-          <OutletRouter />
+          <Outlet />
         </main>
       </div>
     </div>

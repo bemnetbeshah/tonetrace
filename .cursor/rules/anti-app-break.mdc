@@ -1,0 +1,14 @@
+---
+Before adding ANY new package or library:
+Check if it's absolutely necessary - Can you build it with HTML/CSS/JavaScript instead?
+Research known issues - Search GitHub issues, Stack Overflow, recent release notes
+Test thoroughly - If it crashes during development, don't commit it
+Have a backup plan - Always implement a working fallback first
+If you're unsure about a dependency:
+Don't add it - Build a custom solution instead
+Ask the user - "Should I add this package or build it custom?"
+Document the risk - Explain potential issues before proceeding
+Remember: A working app with custom code is better than a broken app with external dependencies.
+
+alwaysApply: true
+---

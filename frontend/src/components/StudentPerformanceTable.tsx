@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { Search, TrendingUp, TrendingDown, Minus, Eye } from 'lucide-react';
-import { Student } from '../types';
+import { Student } from '../types/models';
 import { cn } from '../lib/ui';
 
 interface StudentPerformanceTableProps {
@@ -30,6 +30,18 @@ const mockStudentMetrics: Record<string, Omit<StudentWithMetrics, keyof Student>
   '10': { latestAssignment: 'Argumentative Essay', growth: 'up', formality: 0.84, complexity: 0.77, alerts: [] },
   '11': { latestAssignment: 'Argumentative Essay', growth: 'up', formality: 0.86, complexity: 0.78, alerts: [] },
   '12': { latestAssignment: 'Argumentative Essay', growth: 'flat', formality: 0.77, complexity: 0.69, alerts: [] },
+  '13': { latestAssignment: 'Argumentative Essay', growth: 'up', formality: 0.83, complexity: 0.76, alerts: [] },
+  '14': { latestAssignment: 'Argumentative Essay', growth: 'flat', formality: 0.75, complexity: 0.67, alerts: [] },
+  '15': { latestAssignment: 'Argumentative Essay', growth: 'up', formality: 0.87, complexity: 0.80, alerts: [] },
+  '16': { latestAssignment: 'Argumentative Essay', growth: 'down', formality: 0.63, complexity: 0.56, alerts: ['Late'] },
+  '17': { latestAssignment: 'Argumentative Essay', growth: 'up', formality: 0.89, complexity: 0.81, alerts: [] },
+  '18': { latestAssignment: 'Argumentative Essay', growth: 'flat', formality: 0.74, complexity: 0.66, alerts: [] },
+  '19': { latestAssignment: 'Argumentative Essay', growth: 'up', formality: 0.90, complexity: 0.82, alerts: [] },
+  '20': { latestAssignment: 'Argumentative Essay', growth: 'down', formality: 0.61, complexity: 0.54, alerts: ['Anomaly'] },
+  '21': { latestAssignment: 'Argumentative Essay', growth: 'up', formality: 0.85, complexity: 0.78, alerts: [] },
+  '22': { latestAssignment: 'Argumentative Essay', growth: 'flat', formality: 0.73, complexity: 0.65, alerts: [] },
+  '23': { latestAssignment: 'Argumentative Essay', growth: 'up', formality: 0.88, complexity: 0.79, alerts: [] },
+  '24': { latestAssignment: 'Argumentative Essay', growth: 'flat', formality: 0.76, complexity: 0.68, alerts: [] },
 };
 
 export const StudentPerformanceTable: React.FC<StudentPerformanceTableProps> = ({
@@ -40,11 +52,40 @@ export const StudentPerformanceTable: React.FC<StudentPerformanceTableProps> = (
   const [sortField, setSortField] = useState<keyof StudentWithMetrics>('name');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
 
+  // Debug logging
+  console.log('StudentPerformanceTable: Received students:', students);
+  console.log('StudentPerformanceTable: Students length:', students?.length);
+
+  // Early return if no students
+  if (!students || students.length === 0) {
+    return (
+      <div className="bg-white rounded-xl border border-gray-200 p-6">
+        <div className="text-center py-8 text-gray-500">
+          <p>No students available.</p>
+        </div>
+      </div>
+    );
+  }
+
   const studentsWithMetrics: StudentWithMetrics[] = useMemo(() => {
-    return students.map(student => ({
+    if (!students || students.length === 0) {
+      console.log('StudentPerformanceTable: No students provided');
+      return [];
+    }
+
+    const result = students.map(student => ({
       ...student,
       ...mockStudentMetrics[student.id],
+      // Ensure all required properties have default values
+      latestAssignment: mockStudentMetrics[student.id]?.latestAssignment || 'No Assignment',
+      growth: mockStudentMetrics[student.id]?.growth || 'flat',
+      formality: mockStudentMetrics[student.id]?.formality || 0.5,
+      complexity: mockStudentMetrics[student.id]?.complexity || 0.5,
+      alerts: mockStudentMetrics[student.id]?.alerts || [],
     }));
+
+    console.log('StudentPerformanceTable: Students with metrics:', result);
+    return result;
   }, [students]);
 
   const filteredAndSortedStudents = useMemo(() => {
@@ -55,6 +96,10 @@ export const StudentPerformanceTable: React.FC<StudentPerformanceTableProps> = (
     filtered.sort((a, b) => {
       let aValue = a[sortField];
       let bValue = b[sortField];
+
+      // Handle undefined values
+      if (aValue === undefined) aValue = '';
+      if (bValue === undefined) bValue = '';
 
       if (typeof aValue === 'string' && typeof bValue === 'string') {
         aValue = aValue.toLowerCase();
@@ -201,7 +246,7 @@ export const StudentPerformanceTable: React.FC<StudentPerformanceTableProps> = (
                     <span className={cn("inline-flex items-center px-2 py-1 rounded-full text-xs font-medium", getRiskLevelColor(student.riskLevel))}>
                       {student.riskLevel}
                     </span>
-                    {student.alerts.map((alert, index) => (
+                    {(student.alerts || []).map((alert, index) => (
                       <span key={index} className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
                         {alert}
                       </span>

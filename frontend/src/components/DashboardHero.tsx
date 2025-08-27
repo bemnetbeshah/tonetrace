@@ -36,19 +36,19 @@ export const DashboardHero: React.FC<DashboardHeroProps> = ({ data, students }) 
           <p className="text-blue-100 text-lg mb-4">{classInfo.term || 'Current Term'}</p>
           
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div className="bg-white/10 rounded-lg p-4 backdrop-blur-sm">
+            <div className="bg-white/10 rounded-lg p-4 backdrop-blur-sm text-center">
               <div className="text-2xl font-bold">{classInfo.studentCount || 0}</div>
               <div className="text-blue-100 text-sm">Total Students</div>
             </div>
             
-            <div className="bg-white/10 rounded-lg p-4 backdrop-blur-sm">
+            <div className="bg-white/10 rounded-lg p-4 backdrop-blur-sm text-center">
               <div className="text-2xl font-bold">{data.kpis?.length || 0}</div>
               <div className="text-blue-100 text-sm">Key Metrics</div>
             </div>
             
-            <div className="bg-white/10 rounded-lg p-4 backdrop-blur-sm">
+            <div className="bg-white/10 rounded-lg p-4 backdrop-blur-sm text-center">
               <div className="text-2xl font-bold">
-                {classInfo.latestAssignment?.submissionRate || 0}%
+                {Math.round(classInfo.latestAssignment?.submissionRate || 0)}%
               </div>
               <div className="text-blue-100 text-sm">Latest Assignment</div>
             </div>
@@ -66,11 +66,11 @@ export const DashboardHero: React.FC<DashboardHeroProps> = ({ data, students }) 
               <div className="w-full bg-white/20 rounded-full h-2">
                 <div 
                   className="bg-white h-2 rounded-full transition-all duration-300"
-                  style={{ width: `${classInfo.latestAssignment?.submissionRate || 0}%` }}
+                  style={{ width: `${Math.round(classInfo.latestAssignment?.submissionRate || 0)}%` }}
                 ></div>
               </div>
               <p className="text-blue-100 text-sm mt-1">
-                {classInfo.latestAssignment?.submissionRate || 0}% submitted
+                {Math.round(classInfo.latestAssignment?.submissionRate || 0)}% submitted
               </p>
             </div>
           </div>

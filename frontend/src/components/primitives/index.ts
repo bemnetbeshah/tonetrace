@@ -1,7 +1,8 @@
 export { Button } from './Button';
-export type { ButtonProps } from './Button';
-export { default as ButtonDefault } from './Button';
-
 export { Badge } from './Badge';
-export type { BadgeProps } from './Badge';
-export { default as BadgeDefault } from './Badge'; 
+export { Card, CardHeader, CardTitle, CardContent } from './Card';
+export { Input } from './Input';
+export { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from './Table';
+export { Tooltip } from './Tooltip';
+export { KpiStat } from './KpiStat';
+export { Section } from './Section'; 

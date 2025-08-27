@@ -1,0 +1,23 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+echo "🔍 Running pre-commit checks..."
+
+# Check for security vulnerabilities
+npm audit --audit-level=moderate || {
+  echo "❌ Security vulnerabilities found. Run 'npm audit fix' before committing."
+  exit 1
+}
+
+# Check if package-lock.json is up to date
+if [ -f package-lock.json ]; then
+  npm ci --dry-run > /dev/null 2>&1 || {
+    echo "❌ package-lock.json is out of sync. Run 'npm install' before committing."
+    exit 1
+  }
+else
+  echo "❌ package-lock.json missing. Run 'npm install' before committing."
+  exit 1
+fi
+
+echo "✅ Pre-commit checks passed!"

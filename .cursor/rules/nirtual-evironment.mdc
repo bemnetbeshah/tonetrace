@@ -1,0 +1,5 @@
+---
+description: this project is written in a virtual environment, so make sure you always open it before doing anything. It is in the .venv directory
+globs:
+alwaysApply: true
+---
