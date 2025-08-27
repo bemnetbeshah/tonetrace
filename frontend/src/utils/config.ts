@@ -14,3 +14,4 @@ export const FORCE_MOCK: Record<EndpointId, boolean> = {
   student_profile: true,
   assignments_overview: true
 };
+
