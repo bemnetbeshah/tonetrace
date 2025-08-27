@@ -53,8 +53,8 @@ const assignmentTitles = [
 ];
 
 const toneTypes = ['formal', 'academic', 'conversational', 'emotional', 'technical', 'creative'];
-const grammarQualities = ['excellent', 'good', 'fair', 'poor'] as const;
-const educationLevels = ['elementary', 'middle', 'high', 'college'] as const;
+const grammarQualities = ['excellent', 'good', 'fair', 'poor'];
+const educationLevels = ['elementary', 'middle', 'high', 'college'];
 
 export function buildMockDataset(countStudents = 24, countAssignments = 5) {
   const students: Student[] = [];
@@ -146,7 +146,7 @@ export function buildMockDataset(countStudents = 24, countAssignments = 5) {
             smog: rng.nextFloat(5, 15),
             fog: rng.nextFloat(6, 18),
             daleChall: rng.nextFloat(4, 12),
-            eduLevel: rng.choice(educationLevels)
+            eduLevel: rng.choice(educationLevels) as 'elementary' | 'middle' | 'high' | 'college'
           },
           
           grammar: {
@@ -156,7 +156,7 @@ export function buildMockDataset(countStudents = 24, countAssignments = 5) {
               grammar: rng.nextInt(0, 6),
               style: rng.nextInt(0, 4)
             },
-            quality: rng.choice(grammarQualities)
+            quality: rng.choice(grammarQualities) as 'excellent' | 'good' | 'fair' | 'poor'
           },
           
           hedging: {

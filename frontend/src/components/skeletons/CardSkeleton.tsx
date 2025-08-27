@@ -1,6 +1,6 @@
 import React from 'react';
 
-interface CardSkeletonProps {
+export interface CardSkeletonProps {
   className?: string;
   count?: number;
 }

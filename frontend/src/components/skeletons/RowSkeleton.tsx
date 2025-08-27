@@ -1,6 +1,6 @@
 import React from 'react';
 
-interface RowSkeletonProps {
+export interface RowSkeletonProps {
   className?: string;
   count?: number;
 }

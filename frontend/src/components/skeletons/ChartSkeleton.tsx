@@ -1,6 +1,6 @@
 import React from 'react';
 
-interface ChartSkeletonProps {
+export interface ChartSkeletonProps {
   className?: string;
   count?: number;
 }

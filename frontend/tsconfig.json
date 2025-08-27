@@ -41,11 +41,17 @@
     "src/components/states/Error.tsx",
     "src/components/states/index.ts",
     "src/utils/csv.ts",
-    "src/api/mockApi.ts",
+    "src/utils/config.ts",
+    "src/services/api.ts",
+    "src/services/http.ts",
+    "src/services/realApi.ts",
+    "src/services/mockApi.ts",
+    "src/mocks/mockData.ts",
     "src/types.ts",
     "src/schemas.ts",
     "src/lib/ui.ts",
-    "src/styles/main.css"
+    "src/styles/main.css",
+    "src/vite-env.d.ts"
   ],
   "exclude": [
     "src/accessibility/**/*",
