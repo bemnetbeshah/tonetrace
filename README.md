@@ -93,6 +93,24 @@ Analyzes text and returns comprehensive style metrics with anomaly detection.
 }
 ```
 
+## Deployment
+
+### Environment Variables Required
+
+Set these environment variables in your Render deployment:
+
+```bash
+DATABASE_URL=postgresql+asyncpg://neondb_owner:npg_BZlVjuAs5gd4@ep-lingering-mud-adhn0gr1-pooler.c-2.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require
+ALLOWED_ORIGINS=https://tonetrace.vercel.app,http://localhost:5173
+```
+
+### Render Deployment Steps
+
+1. **Set Environment Variables**: Add the above variables in your Render service settings
+2. **Build Command**: `pip install -r requirements.txt`
+3. **Start Command**: `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
+4. **Database Migration**: Run `alembic upgrade head` after first deployment
+
 ## Installation
 
 1. Clone the repository:
@@ -115,7 +133,11 @@ python -m spacy download en_core_web_sm
 
 ### Running the API Server
 ```bash
-uvicorn main:app --reload
+# Local development
+uvicorn app.main:app --reload
+
+# Production (Render)
+uvicorn app.main:app --host 0.0.0.0 --port $PORT
 ```
 
 ### Using the Anomaly Detection Feature
@@ -134,13 +156,13 @@ The anomaly detection automatically works with the `/analyze` endpoint. It:
 import requests
 
 # First analysis (creates baseline)
-response1 = requests.post("http://localhost:8000/analyze", json={
+response1 = requests.post("https://your-render-backend.ondigitalocean.app/analyze", json={
     "text": "This is a formal academic text with complex sentence structures.",
     "user_id": "user123"
 })
 
 # Second analysis (compares against baseline)
-response2 = requests.post("http://localhost:8000/analyze", json={
+response2 = requests.post("https://your-render-backend.ondigitalocean.app/analyze", json={
     "text": "Hey! This is super casual and informal writing, ya know?",
     "user_id": "user123"
 })

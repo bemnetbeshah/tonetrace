@@ -1,4 +1,5 @@
 export const CONFIG = {
-  // PLACEHOLDER_API: set this to your FastAPI origin later
-  BASE_URL: import.meta.env.VITE_API_BASE || 'http://localhost:8000'
+  // Set VITE_API_BASE environment variable in Vercel to your Render backend URL
+  // Example: https://your-backend-name.onrender.com
+  BASE_URL: import.meta.env.VITE_API_BASE || 'https://your-backend-name.onrender.com'
 }; 

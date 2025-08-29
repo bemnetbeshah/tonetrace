@@ -6,7 +6,7 @@ from routes import profile
 
 app = FastAPI()
 
-origins = os.getenv('ALLOWED_ORIGINS', 'http://localhost:5173').split(',')
+origins = os.getenv('ALLOWED_ORIGINS', 'http://localhost:5173,https://tonetrace.vercel.app').split(',')
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,

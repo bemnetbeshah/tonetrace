@@ -101,7 +101,7 @@ To integrate with a real backend:
 
 2. **Configure base URL** in environment variables:
    ```typescript
-   const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:8000';
+   const API_BASE = import.meta.env.VITE_API_BASE || 'https://your-backend-name.onrender.com';
    ```
 
 3. **Add authentication** headers:
