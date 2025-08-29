@@ -11,7 +11,7 @@ cmudict==1.1.0
 colorama==0.4.6
 confection==0.1.5
 cymem==2.0.11
-en_core_web_sm @ https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.8.0/en_core_web_sm-3.8.0-py3-none-any.whl#sha256=1932429db727d4bff3deed6b34cfc05df17794f4a52eeb26cf8928f7c1a0fb85
+en_core_web_sm @ https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.7.1/en_core_web_sm-3.7.1-py3-none-any.whl
 fastapi==0.116.1
 filelock==3.18.0
 fsspec==2025.7.0
@@ -76,4 +76,3 @@ wrapt==1.17.2
 zipp==3.23.0
 pytest==8.2.1
 wordfreq==3.1.1
-祰桴湯搭瑯湥㵶ㄽ〮〮
