@@ -20,3 +20,5 @@ export function useApiSafe<T extends (...args: any[]) => Promise<any>>(fn: T) {
   return { call, loading, error };
 }
 
+
+

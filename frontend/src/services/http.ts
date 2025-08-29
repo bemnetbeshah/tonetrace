@@ -14,3 +14,5 @@ export const http = {
   post: <T>(path: string, body: unknown, init?: RequestInit) => handle<T>(fetch(`${CONFIG.BASE_URL}${path}`, { ...init, method: 'POST', body: JSON.stringify(body), headers: { 'Content-Type': 'application/json', ...(init?.headers || {}) } }))
 };
 
+
+
