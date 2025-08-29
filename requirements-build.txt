@@ -1,0 +1,24 @@
+# Build dependencies for Render deployment
+# These packages help with compilation and wheel building
+
+# Core build tools
+setuptools>=65.0.0
+wheel>=0.40.0
+pip>=23.0.0
+
+# Compilation dependencies
+gcc
+build-essential
+python3-dev
+
+# Alternative to blis that's more compatible
+# Use preshed instead of blis for better compatibility
+preshed>=3.0.0
+
+# Additional numpy/scipy dependencies that might help
+numpy>=1.24.0
+scipy>=1.10.0
+
+# Alternative spaCy installation method
+# This can help avoid compilation issues
+spacy[all]>=3.6.0

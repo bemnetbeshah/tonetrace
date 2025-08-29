@@ -1,0 +1,87 @@
+# Render-optimized requirements.txt
+# This version uses pre-built wheels and avoids compilation issues
+
+# Core FastAPI dependencies
+fastapi==0.116.1
+uvicorn==0.35.0
+pydantic==2.11.7
+pydantic_core==2.33.2
+
+# Database and async
+anyio==4.9.0
+httpx==0.28.1
+httpcore==1.0.9
+
+# NLP and ML libraries (using stable versions)
+numpy==1.24.3
+scipy==1.11.4
+scikit-learn==1.3.2
+
+# Text processing (alternatives to spaCy for deployment)
+textblob==0.19.0
+nltk==3.9.1
+textstat==0.7.8
+regex==2024.11.6
+
+# Transformers and ML
+transformers==4.53.3
+torch==2.7.1
+tokenizers==0.21.2
+accelerate==1.9.0
+safetensors==0.5.3
+
+# Utilities
+python-dotenv==1.0.0
+requests==2.32.4
+rich==14.0.0
+tqdm==4.67.1
+packaging==25.0
+setuptools==80.9.0
+wheel==0.45.1
+
+# Testing
+pytest==8.2.1
+
+# Additional text processing
+wordfreq==3.1.1
+pyphen==0.17.2
+cmudict==1.1.0
+
+# Alternative to spaCy for basic NLP
+# Using pattern library for basic text analysis
+pattern==3.6
+
+# Additional dependencies
+certifi==2025.7.14
+charset-normalizer==3.4.2
+click==8.2.1
+colorama==0.4.6
+filelock==3.18.0
+fsspec==2025.7.0
+h11==0.16.0
+huggingface-hub==0.33.4
+idna==3.10
+importlib_metadata==8.7.0
+importlib_resources==6.5.2
+Jinja2==3.1.6
+joblib==1.5.1
+langcodes==3.5.0
+language_data==1.3.0
+markdown-it-py==3.0.0
+MarkupSafe==3.0.2
+mdurl==0.1.2
+mpmath==1.3.0
+networkx==3.5
+Pygments==2.19.2
+PyYAML==6.0.2
+shellingham==1.5.4
+smart_open==6.3.0
+sniffio==1.3.1
+starlette==0.47.1
+sympy==1.14.0
+typer==0.7.0
+typing-inspection==0.4.1
+typing_extensions==4.14.1
+urllib3==2.5.0
+zipp==3.23.0
+wrapt==1.17.2
