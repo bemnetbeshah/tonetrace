@@ -49,8 +49,8 @@ def test_requirements(requirements_file):
     if not run_command(f"python3 -m venv {venv_name}", f"Creating virtual environment {venv_name}"):
         return False
     
-    # Activate and install requirements
-    activate_cmd = f"source {venv_name}/bin/activate"
+    # Activate and install requirements (using . instead of source for compatibility)
+    activate_cmd = f". {venv_name}/bin/activate"
     install_cmd = f"{activate_cmd} && pip install --upgrade pip setuptools wheel"
     
     if not run_command(install_cmd, "Upgrading pip, setuptools, and wheel"):

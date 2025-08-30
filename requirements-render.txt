@@ -1,5 +1,5 @@
-# Render-optimized requirements.txt
-# This version uses pre-built wheels and avoids compilation issues
+# Render-optimized requirements.txt - NO spaCy, NO compilation
+# This version uses only pre-built wheels and lightweight alternatives
 
 # Core FastAPI dependencies
 fastapi==0.116.1
@@ -17,7 +17,7 @@ numpy==1.24.3
 scipy==1.11.4
 scikit-learn==1.3.2
 
-# Text processing (alternatives to spaCy for deployment)
+# Text processing (lightweight alternatives to spaCy)
 textblob==0.19.0
 nltk==3.9.1
 textstat==0.7.8
@@ -47,9 +47,9 @@ wordfreq==3.1.1
 pyphen==0.17.2
 cmudict==1.1.0
 
-# Alternative to spaCy for basic NLP
-# Using pattern library for basic text analysis
-pattern==3.6
+# Lightweight NLP alternatives
+# Using NLTK and textblob for basic text analysis
+# No heavy dependencies that require compilation
 
 # Additional dependencies
 certifi==2025.7.14
