@@ -12,10 +12,10 @@ anyio==4.9.0
 httpx==0.28.1
 httpcore==1.0.9
 
-# NLP and ML libraries (using stable versions)
-numpy==1.24.3
-scipy==1.11.4
-scikit-learn==1.3.2
+# NLP and ML libraries (Python 3.13 compatible versions)
+numpy>=1.26.0
+scipy>=1.11.0
+scikit-learn>=1.3.0
 
 # Text processing (lightweight alternatives to spaCy)
 textblob==0.19.0
@@ -23,12 +23,12 @@ nltk==3.9.1
 textstat==0.7.8
 regex==2024.11.6
 
-# Transformers and ML
-transformers==4.53.3
-torch==2.7.1
-tokenizers==0.21.2
-accelerate==1.9.0
-safetensors==0.5.3
+# Transformers and ML (Python 3.13 compatible)
+transformers>=4.40.0
+torch>=2.1.0
+tokenizers>=0.19.0
+accelerate>=1.0.0
+safetensors>=0.4.0
 
 # Utilities
 python-dotenv==1.0.0
