@@ -117,8 +117,8 @@ export const isRouteActive = (path: string, pathname: string): boolean => {
     return normalizedPathname === '/' || normalizedPathname === '/dashboard' || normalizedPathname === '';
   }
   
-  // Default logic for other static routes
-  return normalizedPathname.startsWith(path);
+  // Default logic for other static routes - exact match
+  return normalizedPathname === path;
 };
 
 // Export route constants for easy access

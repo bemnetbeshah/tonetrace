@@ -66,6 +66,31 @@
   .input {
     @apply w-full px-4 py-2 border border-gray-300 rounded-md text-body focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent;
   }
+
+  /* Sidebar navigation styles */
+  .sidebar-container {
+    @apply bg-gray-800 text-white;
+  }
+
+  .sidebar-collapsed {
+    @apply w-16;
+  }
+
+  .sidebar-active {
+    @apply bg-primary text-white;
+  }
+
+  .sidebar-active-strip {
+    @apply absolute left-0 top-0 bottom-0 w-1 bg-primary;
+  }
+
+  .sidebar-icon {
+    @apply flex-shrink-0;
+  }
+
+  .sidebar-label {
+    @apply truncate;
+  }
 }
 
 /* Print styles */
