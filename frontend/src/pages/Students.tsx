@@ -3,11 +3,13 @@ import { useNavigate } from 'react-router-dom';
 import { Card, CardHeader, CardTitle, CardContent, Badge, Input } from '../components/primitives';
 import { fetchStudentsPage } from '../data/adapters';
 import type { Student } from '../types/models';
+import ManualAnalysisModal from '../components/ManualAnalysisModal';
 
 export const Students: React.FC = () => {
   const [students, setStudents] = useState<Student[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
+  const [showManualAnalysis, setShowManualAnalysis] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -46,6 +48,11 @@ export const Students: React.FC = () => {
 
   const handleViewStudent = (studentId: string) => {
     navigate(`/students/${studentId}`);
+  };
+
+  const handleAnalyzeManually = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setShowManualAnalysis(true);
   };
 
   if (loading) {
@@ -137,7 +144,7 @@ export const Students: React.FC = () => {
                       </div>
                     </>
                   )}
-                  <div className="pt-2 border-t border-gray-200">
+                  <div className="pt-2 border-t border-gray-200 space-y-2">
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
@@ -146,6 +153,12 @@ export const Students: React.FC = () => {
                       className="w-full px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
                     >
                       View Details
+                    </button>
+                    <button
+                      onClick={handleAnalyzeManually}
+                      className="w-full px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition-colors"
+                    >
+                      Analyze Manually
                     </button>
                   </div>
                 </div>
@@ -164,6 +177,12 @@ export const Students: React.FC = () => {
           </div>
         )}
       </div>
+
+      {/* Manual Analysis Modal */}
+      <ManualAnalysisModal
+        isOpen={showManualAnalysis}
+        onClose={() => setShowManualAnalysis(false)}
+      />
     </div>
   );
 };
