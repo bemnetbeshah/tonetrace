@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: tonetrace-api
+    env: python
+    plan: free
+    buildCommand: |
+      pip install -r requirements-render-minimal.txt
+      python -c "import nltk; nltk.download('punkt'); nltk.download('averaged_perceptron_tagger'); nltk.download('stopwords')"
+    startCommand: uvicorn app.main_lightweight:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+      - key: ALLOWED_ORIGINS
+        value: https://tonetrace.vercel.app,http://localhost:5173
