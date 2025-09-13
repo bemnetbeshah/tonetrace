@@ -2,14 +2,14 @@ from fastapi import APIRouter
 from pydantic import BaseModel
 import time
 from analyzers.style_metrics_alt import compute_formality, compute_complexity
-from analyzers.tone import classify_tone_model
+from analyzers.tone_lightweight import classify_tone_model
 from analyzers.sentiment import analyze_sentiment
 from analyzers.passive_voice_alt import detect_passive_sentences
 from analyzers.lexical import compute_lexical_diversity
-from analyzers.lexical_richness import analyze_lexical_richness
+from analyzers.lexical_richness_lightweight import analyze_lexical_richness
 from analyzers.hedging import detect_hedging
 from analyzers.anomaly import detect_anomaly
-from analyzers.grammar import analyze_grammar
+from analyzers.grammar_lightweight import analyze_grammar
 from analyzers.readability import analyze_readability, get_readability_interpretation
 from style_profile_module import StyleProfile
 from services.database import get_student_profile, save_student_profile, create_default_profile
