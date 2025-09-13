@@ -1,96 +1,128 @@
-2025-09-09T16:46:59.89747349Z ==> Cloning from https://github.com/bemnetbeshah/tonetrace
-2025-09-09T16:47:00.689328147Z ==> Checking out commit 00c735c076670bb4f23f621d669dea8d0dbc40aa in branch main
-2025-09-09T16:47:03.018731741Z ==> Using Python version 3.13.4 (default)
-2025-09-09T16:47:03.043965032Z ==> Docs on specifying a Python version: https://render.com/docs/python-version
-2025-09-09T16:47:06.209980085Z ==> Using Poetry version 2.1.3 (default)
-2025-09-09T16:47:06.275680104Z ==> Docs on specifying a Poetry version: https://render.com/docs/poetry-version
-2025-09-09T16:47:06.302635575Z ==> Running build command 'pip install --upgrade pip setuptools wheel && pip install -r requirements-render.txt'...
-2025-09-09T16:47:06.835246193Z Requirement already satisfied: pip in ./.venv/lib/python3.13/site-packages (25.1.1)
-2025-09-09T16:47:06.942745708Z Collecting pip
-2025-09-09T16:47:07.02017233Z   Downloading pip-25.2-py3-none-any.whl.metadata (4.7 kB)
-2025-09-09T16:47:07.189506209Z Collecting setuptools
-2025-09-09T16:47:07.198449061Z   Downloading setuptools-80.9.0-py3-none-any.whl.metadata (6.6 kB)
-2025-09-09T16:47:07.242193265Z Collecting wheel
-2025-09-09T16:47:07.254856706Z   Downloading wheel-0.45.1-py3-none-any.whl.metadata (2.3 kB)
-2025-09-09T16:47:07.27510036Z Downloading pip-25.2-py3-none-any.whl (1.8 MB)
-2025-09-09T16:47:07.405882258Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.8/1.8 MB 15.1 MB/s eta 0:00:00
-2025-09-09T16:47:07.416467119Z Downloading setuptools-80.9.0-py3-none-any.whl (1.2 MB)
-2025-09-09T16:47:07.472386379Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.2/1.2 MB 21.2 MB/s eta 0:00:00
-2025-09-09T16:47:07.481715963Z Downloading wheel-0.45.1-py3-none-any.whl (72 kB)
-2025-09-09T16:47:07.513040562Z Installing collected packages: wheel, setuptools, pip
-2025-09-09T16:47:08.369169764Z   Attempting uninstall: pip
-2025-09-09T16:47:08.372464701Z     Found existing installation: pip 25.1.1
-2025-09-09T16:47:08.416931596Z     Uninstalling pip-25.1.1:
-2025-09-09T16:47:08.424427465Z       Successfully uninstalled pip-25.1.1
-2025-09-09T16:47:09.430882749Z 
-2025-09-09T16:47:09.432555278Z Successfully installed pip-25.2 setuptools-80.9.0 wheel-0.45.1
-2025-09-09T16:47:10.258979348Z Collecting fastapi==0.116.1 (from -r requirements-render.txt (line 5))
-2025-09-09T16:47:10.310233252Z   Downloading fastapi-0.116.1-py3-none-any.whl.metadata (28 kB)
-2025-09-09T16:47:10.382928285Z Collecting uvicorn==0.35.0 (from -r requirements-render.txt (line 6))
-2025-09-09T16:47:10.392352061Z   Downloading uvicorn-0.35.0-py3-none-any.whl.metadata (6.5 kB)
-2025-09-09T16:47:10.53785542Z Collecting pydantic==2.11.7 (from -r requirements-render.txt (line 7))
-2025-09-09T16:47:10.547147753Z   Downloading pydantic-2.11.7-py3-none-any.whl.metadata (67 kB)
-2025-09-09T16:47:11.311846492Z Collecting pydantic_core==2.33.2 (from -r requirements-render.txt (line 8))
-2025-09-09T16:47:11.321015821Z   Downloading pydantic_core-2.33.2-cp313-cp313-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (6.8 kB)
-2025-09-09T16:47:11.360768727Z Collecting anyio==4.9.0 (from -r requirements-render.txt (line 11))
-2025-09-09T16:47:11.369900825Z   Downloading anyio-4.9.0-py3-none-any.whl.metadata (4.7 kB)
-2025-09-09T16:47:11.402852392Z Collecting httpx==0.28.1 (from -r requirements-render.txt (line 12))
-2025-09-09T16:47:11.411406993Z   Downloading httpx-0.28.1-py3-none-any.whl.metadata (7.1 kB)
-2025-09-09T16:47:11.442705412Z Collecting httpcore==1.0.9 (from -r requirements-render.txt (line 13))
-2025-09-09T16:47:11.45490552Z   Downloading httpcore-1.0.9-py3-none-any.whl.metadata (21 kB)
-2025-09-09T16:47:11.665019055Z Collecting numpy==1.24.3 (from -r requirements-render.txt (line 16))
-2025-09-09T16:47:11.676258175Z   Downloading numpy-1.24.3.tar.gz (10.9 MB)
-2025-09-09T16:47:11.764907136Z      ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 10.9/10.9 MB 135.6 MB/s  0:00:00
-2025-09-09T16:47:12.710977716Z   Installing build dependencies: started
-2025-09-09T16:47:14.173731897Z   Installing build dependencies: finished with status 'done'
-2025-09-09T16:47:14.175122478Z   Getting requirements to build wheel: started
-2025-09-09T16:47:14.464364125Z   Getting requirements to build wheel: finished with status 'error'
-2025-09-09T16:47:14.469288Z   error: subprocess-exited-with-error
-2025-09-09T16:47:14.46929963Z   
-2025-09-09T16:47:14.4693048Z   × Getting requirements to build wheel did not run successfully.
-2025-09-09T16:47:14.46930952Z   │ exit code: 1
-2025-09-09T16:47:14.469314331Z   ╰─> [32 lines of output]
-2025-09-09T16:47:14.469318231Z       Traceback (most recent call last):
-2025-09-09T16:47:14.469322951Z         File "/opt/render/project/src/.venv/lib/python3.13/site-packages/pip/_vendor/pyproject_hooks/_in_process/_in_process.py", line 389, in <module>
-2025-09-09T16:47:14.469326811Z           main()
-2025-09-09T16:47:14.469330771Z           ~~~~^^
-2025-09-09T16:47:14.469334541Z         File "/opt/render/project/src/.venv/lib/python3.13/site-packages/pip/_vendor/pyproject_hooks/_in_process/_in_process.py", line 373, in main
-2025-09-09T16:47:14.469339741Z           json_out["return_val"] = hook(**hook_input["kwargs"])
-2025-09-09T16:47:14.469343471Z                                    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^
-2025-09-09T16:47:14.469347992Z         File "/opt/render/project/src/.venv/lib/python3.13/site-packages/pip/_vendor/pyproject_hooks/_in_process/_in_process.py", line 137, in get_requires_for_build_wheel
-2025-09-09T16:47:14.469351961Z           backend = _build_backend()
-2025-09-09T16:47:14.469355842Z         File "/opt/render/project/src/.venv/lib/python3.13/site-packages/pip/_vendor/pyproject_hooks/_in_process/_in_process.py", line 70, in _build_backend
-2025-09-09T16:47:14.469359702Z           obj = import_module(mod_path)
-2025-09-09T16:47:14.469364402Z         File "/usr/local/lib/python3.13/importlib/__init__.py", line 88, in import_module
-2025-09-09T16:47:14.469371442Z           return _bootstrap._gcd_import(name[level:], package, level)
-2025-09-09T16:47:14.469375212Z                  ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-2025-09-09T16:47:14.469379132Z         File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
-2025-09-09T16:47:14.469383102Z         File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
-2025-09-09T16:47:14.469387073Z         File "<frozen importlib._bootstrap>", line 1310, in _find_and_load_unlocked
-2025-09-09T16:47:14.469390973Z         File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
-2025-09-09T16:47:14.469402313Z         File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
-2025-09-09T16:47:14.469404863Z         File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
-2025-09-09T16:47:14.469407353Z         File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
-2025-09-09T16:47:14.469409673Z         File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
-2025-09-09T16:47:14.469411983Z         File "<frozen importlib._bootstrap_external>", line 1026, in exec_module
-2025-09-09T16:47:14.469414283Z         File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
-2025-09-09T16:47:14.469417243Z         File "/tmp/pip-build-env-mxa63pj8/overlay/lib/python3.13/site-packages/setuptools/__init__.py", line 16, in <module>
-2025-09-09T16:47:14.469419583Z           import setuptools.version
-2025-09-09T16:47:14.469421863Z         File "/tmp/pip-build-env-mxa63pj8/overlay/lib/python3.13/site-packages/setuptools/version.py", line 1, in <module>
-2025-09-09T16:47:14.469424134Z           import pkg_resources
-2025-09-09T16:47:14.469427034Z         File "/tmp/pip-build-env-mxa63pj8/overlay/lib/python3.13/site-packages/pkg_resources/__init__.py", line 2172, in <module>
-2025-09-09T16:47:14.469429504Z           register_finder(pkgutil.ImpImporter, find_on_path)
-2025-09-09T16:47:14.469431854Z                           ^^^^^^^^^^^^^^^^^^^
-2025-09-09T16:47:14.469434814Z       AttributeError: module 'pkgutil' has no attribute 'ImpImporter'. Did you mean: 'zipimporter'?
-2025-09-09T16:47:14.469437154Z       [end of output]
-2025-09-09T16:47:14.469439494Z   
-2025-09-09T16:47:14.469441794Z   note: This error originates from a subprocess, and is likely not a problem with pip.
-2025-09-09T16:47:14.475854922Z error: subprocess-exited-with-error
-2025-09-09T16:47:14.475869103Z 
-2025-09-09T16:47:14.475873053Z × Getting requirements to build wheel did not run successfully.
-2025-09-09T16:47:14.475876233Z │ exit code: 1
-2025-09-09T16:47:14.475879453Z ╰─> See above for output.
-2025-09-09T16:47:14.475881793Z 
-2025-09-09T16:47:14.475884953Z note: This error originates from a subprocess, and is likely not a problem with pip.
-2025-09-09T16:47:14.718591195Z ==> Build failed 😞
-2025-09-09T16:47:14.718609555Z ==> Common ways to troubleshoot your deploy: https://render.com/docs/troubleshooting-deploys
+Deploying...
+==> No open ports detected, continuing to scan...
+==> Docs on specifying a port: https://render.com/docs/web-services#port-binding
+  File "/opt/render/project/src/.venv/lib/python3.13/site-packages/click/core.py", line 794, in invoke
+    return callback(*args, **kwargs)
+  File "/opt/render/project/src/.venv/lib/python3.13/site-packages/uvicorn/main.py", line 413, in main
+    run(
+    ~~~^
+        app,
+        ^^^^
+    ...<45 lines>...
+        h11_max_incomplete_event_size=h11_max_incomplete_event_size,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/opt/render/project/src/.venv/lib/python3.13/site-packages/uvicorn/main.py", line 580, in run
+    server.run()
+    ~~~~~~~~~~^^
+  File "/opt/render/project/src/.venv/lib/python3.13/site-packages/uvicorn/server.py", line 67, in run
+    return asyncio.run(self.serve(sockets=sockets))
+           ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.13/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ~~~~~~~~~~^^^^^^
+  File "/usr/local/lib/python3.13/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/usr/local/lib/python3.13/asyncio/base_events.py", line 725, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "/opt/render/project/src/.venv/lib/python3.13/site-packages/uvicorn/server.py", line 71, in serve
+    await self._serve(sockets)
+  File "/opt/render/project/src/.venv/lib/python3.13/site-packages/uvicorn/server.py", line 78, in _serve
+    config.load()
+    ~~~~~~~~~~~^^
+  File "/opt/render/project/src/.venv/lib/python3.13/site-packages/uvicorn/config.py", line 436, in load
+    self.loaded_app = import_from_string(self.app)
+                      ~~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "/opt/render/project/src/.venv/lib/python3.13/site-packages/uvicorn/importer.py", line 22, in import_from_string
+    raise exc from None
+  File "/opt/render/project/src/.venv/lib/python3.13/site-packages/uvicorn/importer.py", line 19, in import_from_string
+    module = importlib.import_module(module_str)
+  File "/usr/local/lib/python3.13/importlib/__init__.py", line 88, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 1026, in exec_module
+  File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+  File "/opt/render/project/src/app/main.py", line 4, in <module>
+    from routes.analyze import router as analyze_router
+  File "/opt/render/project/src/routes/analyze.py", line 4, in <module>
+    from analyzers.style_metrics import compute_formality, compute_complexity
+  File "/opt/render/project/src/analyzers/style_metrics.py", line 19, in <module>
+    import spacy
+ModuleNotFoundError: No module named 'spacy'
+==> Exited with status 1
+==> Common ways to troubleshoot your deploy: https://render.com/docs/troubleshooting-deploys
+==> Running 'uvicorn app.main:app --host 0.0.0.0 --port $PORT'
+Traceback (most recent call last):
+  File "/opt/render/project/src/.venv/bin/uvicorn", line 7, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "/opt/render/project/src/.venv/lib/python3.13/site-packages/click/core.py", line 1442, in __call__
+    return self.main(*args, **kwargs)
+           ~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/opt/render/project/src/.venv/lib/python3.13/site-packages/click/core.py", line 1363, in main
+    rv = self.invoke(ctx)
+  File "/opt/render/project/src/.venv/lib/python3.13/site-packages/click/core.py", line 1226, in invoke
+    return ctx.invoke(self.callback, **ctx.params)
+           ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/render/project/src/.venv/lib/python3.13/site-packages/click/core.py", line 794, in invoke
+    return callback(*args, **kwargs)
+  File "/opt/render/project/src/.venv/lib/python3.13/site-packages/uvicorn/main.py", line 413, in main
+    run(
+    ~~~^
+        app,
+        ^^^^
+    ...<45 lines>...
+        h11_max_incomplete_event_size=h11_max_incomplete_event_size,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/opt/render/project/src/.venv/lib/python3.13/site-packages/uvicorn/main.py", line 580, in run
+    server.run()
+    ~~~~~~~~~~^^
+  File "/opt/render/project/src/.venv/lib/python3.13/site-packages/uvicorn/server.py", line 67, in run
+    return asyncio.run(self.serve(sockets=sockets))
+           ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.13/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ~~~~~~~~~~^^^^^^
+  File "/usr/local/lib/python3.13/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/usr/local/lib/python3.13/asyncio/base_events.py", line 725, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "/opt/render/project/src/.venv/lib/python3.13/site-packages/uvicorn/server.py", line 71, in serve
+    await self._serve(sockets)
+  File "/opt/render/project/src/.venv/lib/python3.13/site-packages/uvicorn/server.py", line 78, in _serve
+    config.load()
+    ~~~~~~~~~~~^^
+  File "/opt/render/project/src/.venv/lib/python3.13/site-packages/uvicorn/config.py", line 436, in load
+    self.loaded_app = import_from_string(self.app)
+                      ~~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "/opt/render/project/src/.venv/lib/python3.13/site-packages/uvicorn/importer.py", line 22, in import_from_string
+    raise exc from None
+  File "/opt/render/project/src/.venv/lib/python3.13/site-packages/uvicorn/importer.py", line 19, in import_from_string
+    module = importlib.import_module(module_str)
+  File "/usr/local/lib/python3.13/importlib/__init__.py", line 88, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 1026, in exec_module
+  File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+  File "/opt/render/project/src/app/main.py", line 4, in <module>
+    from routes.analyze import router as analyze_router
+  File "/opt/render/project/src/routes/analyze.py", line 4, in <module>
+    from analyzers.style_metrics import compute_formality, compute_complexity
+  File "/opt/render/project/src/analyzers/style_metrics.py", line 19, in <module>
+    import spacy
+ModuleNotFoundError: No module named 'spacy'
