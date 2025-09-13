@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { 
   UserCircleIcon,
   HomeIcon,
@@ -45,9 +46,9 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
             const isActive = isRouteActive(item.to, currentPathname);
             
             return (
-              <a
+              <Link
                 key={item.label}
-                href={item.to}
+                to={item.to}
                 className={`
                   flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors
                   ${isActive 
@@ -60,7 +61,7 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
               >
                 <Icon className="h-5 w-5" />
                 <span>{item.label}</span>
-              </a>
+              </Link>
             );
           })}
         </nav>

@@ -21,17 +21,6 @@ export interface NavigationItem {
 // Centralized route configuration
 export const ROUTES: RouteConfig[] = [
   {
-    path: '/',
-    title: 'Class Dashboard',
-    element: 'DashboardPage',
-    icon: HomeIcon,
-    testId: 'nav-dashboard',
-    isActive: (pathname: string) => {
-      const normalizedPathname = pathname.replace(/\/$/, '') || '/';
-      return normalizedPathname === '/' || normalizedPathname === '';
-    }
-  },
-  {
     path: '/dashboard',
     title: 'Class Dashboard',
     element: 'DashboardPage',
@@ -134,7 +123,7 @@ export const isRouteActive = (path: string, pathname: string): boolean => {
 
 // Export route constants for easy access
 export const ROUTE_PATHS = {
-  DASHBOARD: '/',
+  DASHBOARD: '/dashboard',
   STUDENTS: '/students',
   STUDENT_DETAIL: '/students/:id',
   ASSIGNMENTS: '/assignments'

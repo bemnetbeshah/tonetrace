@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { 
   Bars3Icon,
   XMarkIcon
@@ -51,8 +52,8 @@ export const SidebarNav: React.FC<SidebarNavProps> = ({
             
             return (
               <li key={item.label}>
-                <a
-                  href={item.to}
+                <Link
+                  to={item.to}
                   className={`
                     flex items-center gap-3 px-3 py-2 rounded hover:bg-[color:var(--sidebarHover)]
                     ${isActive ? 'sidebar-active' : 'text-gray-300 hover:text-white'}
@@ -76,7 +77,7 @@ export const SidebarNav: React.FC<SidebarNavProps> = ({
                       {item.label}
                     </span>
                   )}
-                </a>
+                </Link>
               </li>
             );
           })}
