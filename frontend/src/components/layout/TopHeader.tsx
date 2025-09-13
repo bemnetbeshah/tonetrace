@@ -4,7 +4,8 @@ import {
   UserCircleIcon,
   HomeIcon,
   UsersIcon,
-  ClipboardDocumentListIcon
+  ClipboardDocumentListIcon,
+  ClockIcon
 } from '@heroicons/react/24/outline';
 import { useRouteState, isRouteActive } from '../../routing';
 
@@ -32,7 +33,8 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
   const navigationItems = [
     { label: 'Class Dashboard', to: '/dashboard', icon: HomeIcon, testId: 'nav-dashboard' },
     { label: 'Students', to: '/students', icon: UsersIcon, testId: 'nav-students' },
-    { label: 'Assignments', to: '/assignments', icon: ClipboardDocumentListIcon, testId: 'nav-assignments' }
+    { label: 'Assignments', to: '/assignments', icon: ClipboardDocumentListIcon, testId: 'nav-assignments' },
+    { label: 'Coming Soon', to: '/coming-soon', icon: ClockIcon, testId: 'nav-coming-soon' }
   ];
 
   return (

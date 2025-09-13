@@ -1,4 +1,4 @@
-import { HomeIcon, UsersIcon, ClipboardDocumentListIcon } from '@heroicons/react/24/outline';
+import { HomeIcon, UsersIcon, ClipboardDocumentListIcon, ClockIcon } from '@heroicons/react/24/outline';
 
 // Route configuration interface
 export interface RouteConfig {
@@ -54,6 +54,14 @@ export const ROUTES: RouteConfig[] = [
     icon: ClipboardDocumentListIcon,
     testId: 'nav-assignments',
     isActive: (pathname: string) => pathname === '/assignments'
+  },
+  {
+    path: '/coming-soon',
+    title: 'Coming Soon',
+    element: 'ComingSoonPage',
+    icon: ClockIcon,
+    testId: 'nav-coming-soon',
+    isActive: (pathname: string) => pathname === '/coming-soon'
   }
 ];
 
@@ -126,12 +134,14 @@ export const ROUTE_PATHS = {
   DASHBOARD: '/dashboard',
   STUDENTS: '/students',
   STUDENT_DETAIL: '/students/:id',
-  ASSIGNMENTS: '/assignments'
+  ASSIGNMENTS: '/assignments',
+  COMING_SOON: '/coming-soon'
 } as const;
 
 export const ROUTE_TITLES = {
   DASHBOARD: 'Class Dashboard',
   STUDENTS: 'Students',
   STUDENT_DETAIL: 'Student Detail',
-  ASSIGNMENTS: 'Assignments'
+  ASSIGNMENTS: 'Assignments',
+  COMING_SOON: 'Coming Soon'
 } as const; 
