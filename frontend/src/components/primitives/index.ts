@@ -5,4 +5,5 @@ export { Input } from './Input';
 export { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from './Table';
 export { Tooltip } from './Tooltip';
 export { KpiStat } from './KpiStat';
-export { Section } from './Section'; 
+export { Section } from './Section';
+export { Modal } from './Modal'; 

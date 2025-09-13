@@ -19,5 +19,5 @@ app.add_middleware(
 def read_root():
     return {"message": "You are now using tonetrace API"}
 
-app.include_router(analyze_router)
-app.include_router(profile.router)
+app.include_router(analyze_router, prefix="/api", tags=["analysis"])
+app.include_router(profile.router, prefix="/api", tags=["profile"])
