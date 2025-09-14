@@ -6,17 +6,17 @@ import path from 'path'
 export default defineConfig({
   plugins: [
     react(),
-    // Custom plugin to handle SPA routing
     {
       name: 'spa-fallback',
       configureServer(server) {
-        server.middlewares.use((req, res, next) => {
-          // If the request doesn't match a file, serve index.html
-          if (req.url && !req.url.includes('.') && req.method === 'GET') {
-            req.url = '/index.html'
-          }
-          next()
-        })
+        return () => {
+          server.middlewares.use((req, res, next) => {
+            if (req.method === 'GET' && req.url && !req.url.includes('.') && !req.url.startsWith('/api')) {
+              req.url = '/index.html'
+            }
+            next()
+          })
+        }
       }
     }
   ],
@@ -30,7 +30,9 @@ export default defineConfig({
   },
   server: {
     port: 5173,
-    strictPort: true
+    strictPort: true,
+    open: false,
+    cors: true
   },
   build: {
     outDir: 'dist',
