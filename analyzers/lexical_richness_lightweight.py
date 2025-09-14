@@ -44,7 +44,7 @@ def analyze_lexical_richness(text: str) -> dict:
         return create_standard_response(
             score=0.0,
             bucket="insufficient_data",
-            raw_emotions=[],
+            raw={},
             confidence=0.0,
             details={
                 "avg_zipf_score": 0,
@@ -69,7 +69,7 @@ def analyze_lexical_richness(text: str) -> dict:
         return create_standard_response(
             score=0.0,
             bucket="insufficient_data",
-            raw_emotions=[],
+            raw={},
             confidence=0.0,
             details={
                 "avg_zipf_score": 0,
@@ -103,12 +103,14 @@ def analyze_lexical_richness(text: str) -> dict:
     # Calculate confidence based on text length
     confidence = min(1.0, len(tokens) / 30)  # Higher confidence with more tokens
     
-    # Create raw emotions breakdown
-    raw_emotions = [
-        {"label": "avg_zipf_score", "score": max(0, 1 - (avg_zipf_score / 8))},  # Normalize to 0-1, lower is better
-        {"label": "percent_rare_words", "score": percent_rare_words},
-        {"label": "num_advanced_words", "score": min(rare_count / 50, 1.0)}  # Normalize to 0-1
-    ]
+    # Create raw breakdown
+    raw_data = {
+        "avg_zipf_score": avg_zipf_score,
+        "percent_rare_words": percent_rare_words,
+        "num_advanced_words": rare_count,
+        "total_tokens": len(tokens),
+        "rare_threshold": rare_threshold
+    }
     
     # Create details with additional metrics
     details = {

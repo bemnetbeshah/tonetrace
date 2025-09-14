@@ -1,10 +1,10 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import os
-from routes.analyze import router as analyze_router
-from routes import profile
+from routes.analyze_lightweight import router as analyze_router
+# from routes import profile  # Disabled for lightweight version
 
-app = FastAPI()
+app = FastAPI(title="ToneTrace API - Lightweight Version", version="1.0.0")
 
 origins = os.getenv('ALLOWED_ORIGINS', 'http://localhost:5173,https://tonetrace.vercel.app').split(',')
 app.add_middleware(
@@ -17,7 +17,20 @@ app.add_middleware(
 
 @app.get("/")
 def read_root():
-    return {"message": "You are now using tonetrace API"}
+    return {
+        "message": "ToneTrace API - Lightweight Version",
+        "version": "1.0.0",
+        "status": "running",
+        "optimized_for": "Render free tier (512MB limit)"
+    }
+
+@app.get("/health")
+def health_check():
+    return {
+        "status": "healthy",
+        "version": "lightweight",
+        "memory_optimized": True
+    }
 
 app.include_router(analyze_router, prefix="/api", tags=["analysis"])
-app.include_router(profile.router, prefix="/api", tags=["profile"])
+# app.include_router(profile.router, prefix="/api", tags=["profile"])  # Disabled for lightweight version

@@ -39,11 +39,13 @@ def detect_hedging(text: str) -> dict:
     # Calculate confidence based on text length
     confidence = min(1.0, word_count / 50)  # Higher confidence with more words
     
-    # Create raw emotions breakdown
-    raw_emotions = [
-        {"label": "hedging_count", "score": min(count / 5, 1.0)},  # Normalize to 0-1 range
-        {"label": "hedging_density", "score": hedging_density * 10}  # Scale for 0-1 range
-    ]
+    # Create raw breakdown
+    raw_data = {
+        "hedging_count": count,
+        "hedging_density": hedging_density,
+        "found_phrases": found_phrases,
+        "word_count": word_count
+    }
     
     # Create details with additional metrics
     details = {
@@ -58,7 +60,7 @@ def detect_hedging(text: str) -> dict:
     return create_standard_response(
         score=score,
         bucket=bucket,
-        raw_emotions=raw_emotions,
+        raw=raw_data,
         confidence=confidence,
         details=details
     )

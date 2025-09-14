@@ -5,9 +5,17 @@ Uses NLTK and regex for basic text analysis.
 
 import re
 import nltk
-from textstat import flesch_kincaid_grade, gunning_fog, dale_chall_score
+from textstat import flesch_kincaid_grade, gunning_fog
 from . import create_standard_response
 from .readability import analyze_readability
+
+# Handle dale_chall_score import compatibility
+try:
+    from textstat import dale_chall_readability_score as dale_chall_score
+except ImportError:
+    # Fallback for older textstat versions
+    def dale_chall_score(text):
+        return 0.0  # Return default value if not available
 
 # Download required NLTK data
 try:
@@ -64,12 +72,12 @@ def compute_formality(text: str) -> dict:
     # Calculate confidence based on text length
     confidence = 0.8  # Base confidence for readability metrics
     
-    # Create raw emotions breakdown using readability scores
-    raw_emotions = [
-        {"label": "flesch_kincaid_grade", "score": readability_scores.get("flesch_kincaid_grade", 0)},
-        {"label": "gunning_fog_index", "score": readability_scores.get("gunning_fog", 0)},
-        {"label": "dale_chall_score", "score": readability_scores.get("dale_chall_score", 0)}
-    ]
+    # Create raw breakdown using readability scores
+    raw_data = {
+        "flesch_kincaid_grade": readability_scores.get("flesch_kincaid_grade", 0),
+        "gunning_fog_index": readability_scores.get("gunning_fog", 0),
+        "dale_chall_score": readability_scores.get("dale_chall_score", 0)
+    }
     
     # Create details with additional metrics
     details = {
@@ -83,7 +91,7 @@ def compute_formality(text: str) -> dict:
     return create_standard_response(
         score=score,
         bucket=bucket,
-        raw_emotions=raw_emotions,
+        raw=raw_data,
         confidence=confidence,
         details=details
     )
@@ -129,11 +137,13 @@ def compute_complexity(text: str) -> dict:
     # Calculate confidence based on text length
     confidence = min(1.0, total_words / 30)  # Higher confidence with more text
     
-    # Create raw emotions breakdown
-    raw_emotions = [
-        {"label": "lexical_density", "score": lexical_density},
-        {"label": "avg_sentence_length", "score": avg_sentence_length / 30}  # Normalize to 0-1 range
-    ]
+    # Create raw breakdown
+    raw_data = {
+        "lexical_density": lexical_density,
+        "avg_sentence_length": avg_sentence_length,
+        "total_words": total_words,
+        "content_words": content_words
+    }
     
     # Create details with additional metrics
     details = {
@@ -151,7 +161,7 @@ def compute_complexity(text: str) -> dict:
     return create_standard_response(
         score=score,
         bucket=bucket,
-        raw_emotions=raw_emotions,
+        raw=raw_data,
         confidence=confidence,
         details=details
     )

@@ -27,11 +27,12 @@ def compute_lexical_diversity(text: str) -> dict:
     # Calculate confidence based on text length
     confidence = min(1.0, total_words / 30)  # Higher confidence with more words
     
-    # Create raw emotions breakdown
-    raw_emotions = [
-        {"label": "unique_words", "score": unique_words / max(total_words, 1)},
-        {"label": "total_words", "score": min(total_words / 100, 1.0)}  # Normalize to 0-1 range
-    ]
+    # Create raw breakdown
+    raw_data = {
+        "unique_words": unique_words,
+        "total_words": total_words,
+        "diversity_ratio": diversity_ratio
+    }
     
     # Create details with additional metrics
     details = {
@@ -45,7 +46,7 @@ def compute_lexical_diversity(text: str) -> dict:
     return create_standard_response(
         score=score,
         bucket=bucket,
-        raw_emotions=raw_emotions,
+        raw=raw_data,
         confidence=confidence,
         details=details
     )
