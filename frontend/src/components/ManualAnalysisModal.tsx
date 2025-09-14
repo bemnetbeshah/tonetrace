@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Modal, Button } from './primitives';
 
 interface ManualAnalysisModalProps {
@@ -32,6 +32,24 @@ const ManualAnalysisModal: React.FC<ManualAnalysisModalProps> = ({
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [results, setResults] = useState<AnalysisResult | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  // Auto-resize textarea based on content
+  const adjustTextareaHeight = () => {
+    const textarea = textareaRef.current;
+    if (textarea) {
+      textarea.style.height = 'auto';
+      const scrollHeight = textarea.scrollHeight;
+      const minHeight = 128; // 8rem (h-32)
+      const maxHeight = 400; // 25rem - reasonable max height
+      textarea.style.height = `${Math.min(Math.max(scrollHeight, minHeight), maxHeight)}px`;
+    }
+  };
+
+  // Adjust height when text changes
+  useEffect(() => {
+    adjustTextareaHeight();
+  }, [text]);
 
   const handleAnalyze = async () => {
     if (!text.trim()) {
@@ -73,6 +91,10 @@ const ManualAnalysisModal: React.FC<ManualAnalysisModalProps> = ({
     setResults(null);
     setError(null);
     setIsAnalyzing(false);
+    // Reset textarea height
+    if (textareaRef.current) {
+      textareaRef.current.style.height = '128px';
+    }
     onClose();
   };
 
@@ -100,12 +122,14 @@ const ManualAnalysisModal: React.FC<ManualAnalysisModalProps> = ({
             Enter text to analyze
           </label>
           <textarea
+            ref={textareaRef}
             id="analysis-text"
             value={text}
             onChange={(e) => setText(e.target.value)}
             placeholder="Paste your writing here for analysis..."
-            className="w-full h-32 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+            className="w-full min-h-32 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 resize-none overflow-hidden"
             disabled={isAnalyzing}
+            style={{ height: '128px' }}
           />
         </div>
 

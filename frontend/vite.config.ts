@@ -4,7 +4,22 @@ import path from 'path'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    react(),
+    // Custom plugin to handle SPA routing
+    {
+      name: 'spa-fallback',
+      configureServer(server) {
+        server.middlewares.use((req, res, next) => {
+          // If the request doesn't match a file, serve index.html
+          if (req.url && !req.url.includes('.') && req.method === 'GET') {
+            req.url = '/index.html'
+          }
+          next()
+        })
+      }
+    }
+  ],
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
@@ -15,11 +30,10 @@ export default defineConfig({
   },
   server: {
     port: 5173,
-    strictPort: true,
-    historyApiFallback: true
+    strictPort: true
   },
   build: {
     outDir: 'dist',
     sourcemap: true,
-  },
+  }
 }) 
