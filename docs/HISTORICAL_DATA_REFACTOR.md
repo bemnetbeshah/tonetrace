@@ -4,7 +4,7 @@
 
 This document describes the refactoring of the historical data system from storing redundant lists in StyleProfile objects to querying historical data directly from the database.
 
-## 🎯 What Changed
+## What Changed
 
 ### Before (Old System)
 - **StyleProfile** stored historical data as lists:
@@ -29,7 +29,7 @@ This document describes the refactoring of the historical data system from stori
   ```
 - **Historical data** is queried directly from the database via dedicated endpoints
 
-## 🏗️ New Architecture
+## New Architecture
 
 ```
 ┌─────────────────┐    ┌──────────────────┐    ┌─────────────────┐
@@ -41,7 +41,7 @@ This document describes the refactoring of the historical data system from stori
 └─────────────────┘    └──────────────────┘    └─────────────────┘
 ```
 
-## 📊 New API Endpoints
+## New API Endpoints
 
 ### Historical Data Endpoints
 
@@ -114,7 +114,7 @@ GET /profile/{user_id}/history/tone?days=30
 GET /profile/{user_id}/performance?days=30
 ```
 
-## 🔧 Implementation Details
+## Implementation Details
 
 ### StyleProfile Changes
 
@@ -163,7 +163,7 @@ def update_averages(self, new_analysis: dict, total_texts: int):
     self.average_sentiment = (self.average_sentiment * (total_texts - 1) + sentiment) / total_texts
 ```
 
-## 💾 Memory Efficiency
+## Memory Efficiency
 
 ### Memory Usage Comparison
 
@@ -181,7 +181,7 @@ def update_averages(self, new_analysis: dict, total_texts: int):
 - **Historical data always fresh** from database queries
 - **Flexible querying** by date ranges, limits, filters
 
-## 🚀 Usage Examples
+## Usage Examples
 
 ### Getting Current Profile
 ```python
@@ -211,7 +211,7 @@ for analyzer, metrics in performance.items():
     print(f"{analyzer}: {metrics['success_rate']:.1f}% success rate")
 ```
 
-## 🔄 Migration Notes
+## Migration Notes
 
 ### For Existing Users
 
@@ -227,7 +227,7 @@ for analyzer, metrics in performance.items():
 3. **Use new API endpoints** for historical data needs
 4. **Profile updates** now use `update_averages()` method
 
-## 🧪 Testing
+## Testing
 
 ### Demo Script
 
@@ -245,7 +245,7 @@ python examples/historical_data_demo.py
 - ✅ API endpoint responses
 - ✅ Memory efficiency improvements
 
-## 📈 Future Enhancements
+## Future Enhancements
 
 ### Potential Improvements
 
@@ -262,7 +262,7 @@ python examples/historical_data_demo.py
 3. **Materialized views** for complex aggregations
 4. **Query optimization** for time-series data
 
-## 🤝 Contributing
+## Contributing
 
 When contributing to the historical data system:
 
@@ -272,7 +272,7 @@ When contributing to the historical data system:
 4. **Update documentation** for new functionality
 5. **Test memory efficiency** of any changes
 
-## 📚 Related Documentation
+## Related Documentation
 
 - [StyleProfile API Reference](../style_profile_module/README.md)
 - [Database Schema](../app/models.py)

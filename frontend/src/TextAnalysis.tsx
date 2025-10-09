@@ -1,0 +1,118 @@
+import React, { useState } from 'react';
+
+function TextAnalysis() {
+  const [text, setText] = useState('');
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [results, setResults] = useState(null);
+
+  const handleAnalyze = async () => {
+    if (!text.trim()) {
+      alert('Please enter some text to analyze');
+      return;
+    }
+
+    setIsAnalyzing(true);
+    try {
+      // TODO: Replace with actual API call
+      const response = await fetch('/api/v1/analyze', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          text: text,
+          student_id: 'default'
+        }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setResults(data);
+      } else {
+        throw new Error('Analysis failed');
+      }
+    } catch (error) {
+      console.error('Error analyzing text:', error);
+      alert('Failed to analyze text. Please try again.');
+    } finally {
+      setIsAnalyzing(false);
+    }
+  };
+
+  const handleClear = () => {
+    setText('');
+    setResults(null);
+  };
+
+  return (
+    <div className="text-analysis">
+      <div className="card">
+        <h2>Text Analysis</h2>
+        <p>Enter your text below to analyze tone, sentiment, grammar, and more.</p>
+        
+        <div className="text-input-container">
+          <textarea
+            className="text-input"
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            placeholder="Enter your text here for analysis..."
+            rows={8}
+          />
+          <div className="text-stats">
+            <span>Characters: {text.length}</span>
+            <span>Words: {text.trim() ? text.trim().split(/\s+/).length : 0}</span>
+          </div>
+        </div>
+
+        <div className="button-group">
+          <button 
+            className="button button-primary" 
+            onClick={handleAnalyze}
+            disabled={isAnalyzing || !text.trim()}
+          >
+            {isAnalyzing ? 'Analyzing...' : 'Analyze Text'}
+          </button>
+          <button 
+            className="button button-secondary" 
+            onClick={handleClear}
+            disabled={isAnalyzing}
+          >
+            Clear
+          </button>
+        </div>
+      </div>
+
+      {results && (
+        <div className="card">
+          <h3>Analysis Results</h3>
+          <div className="results-grid">
+            <div className="result-item">
+              <h4>Tone</h4>
+              <p className="result-value">{results.tone?.bucket || 'N/A'}</p>
+            </div>
+            <div className="result-item">
+              <h4>Sentiment</h4>
+              <p className="result-value">{results.sentiment?.bucket || 'N/A'}</p>
+            </div>
+            <div className="result-item">
+              <h4>Formality</h4>
+              <p className="result-value">{results.formality?.bucket || 'N/A'}</p>
+            </div>
+            <div className="result-item">
+              <h4>Readability</h4>
+              <p className="result-value">{results.readability?.flesch_kincaid_grade || 'N/A'}</p>
+            </div>
+          </div>
+          
+          {results.analysis_time_ms && (
+            <p className="analysis-time">
+              Analysis completed in {results.analysis_time_ms}ms
+            </p>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+export default TextAnalysis;

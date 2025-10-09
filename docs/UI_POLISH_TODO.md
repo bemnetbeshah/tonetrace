@@ -1,10 +1,10 @@
 # UI Polish Todo List
 
-## 🎨 **Frontend Enhancements (No Backend Required)**
+## **Frontend Enhancements (No Backend Required)**
 
 These improvements can be implemented immediately to enhance the user experience and code quality.
 
-### **1. Loading States & Skeletons** 🔄
+### **1. Loading States & Skeletons**
 - **Add loading skeleton components** to cards and tables
 - **Replace simple "Loading..." text** with proper skeleton animations
 - **Use Tailwind's `animate-pulse`** for consistent loading states
@@ -22,7 +22,7 @@ export function CardSkeleton() {
 }
 ```
 
-### **2. Search & Filtering** 🔍
+### **2. Search & Filtering**
 - **Add search filter on StudentsPage** that filters rows on the client
 - **Implement real-time search** as user types
 - **Filter by name, email, or submission status**
@@ -37,7 +37,7 @@ const filteredStudents = rows.filter(student =>
 );
 ```
 
-### **3. Pagination** 📄
+### **3. Pagination**
 - **Add simple pagination for students** using slice on the mock array
 - **Show 10-20 students per page** with navigation controls
 - **Display current page info** (e.g., "Showing 1-10 of 45 students")
@@ -52,7 +52,7 @@ const endIndex = startIndex + studentsPerPage;
 const currentStudents = filteredStudents.slice(startIndex, endIndex);
 ```
 
-### **4. Dark Theme Support** 🌙
+### **4. Dark Theme Support**
 - **Create a ColorMode toggle** if you want a dark theme
 - **Use CSS variables** for color schemes
 - **Implement theme persistence** in localStorage
@@ -67,7 +67,7 @@ const toggleTheme = () => {
 };
 ```
 
-### **5. Reusable Components** 🧩
+### **5. Reusable Components**
 - **Extract a Badge component** for statuses like "Late", "On time", "Submitted"
 - **Create consistent status indicators** across all pages
 - **Add color-coded badges** for different states
@@ -91,7 +91,7 @@ export function Badge({ status, variant = 'default' }: BadgeProps) {
 }
 ```
 
-### **6. Custom Hooks** 🪝
+### **6. Custom Hooks**
 - **Extract a tiny `useAsync` hook** to wrap API calls and handle loading/error states uniformly
 - **Standardize error handling** across all components
 - **Add retry functionality** for failed requests
@@ -121,7 +121,7 @@ export function useAsync<T>(asyncFn: () => Promise<T>) {
 }
 ```
 
-## 🚀 **Implementation Priority**
+## **Implementation Priority**
 
 ### **High Priority (Quick Wins)**
 1. **Loading skeletons** - Immediate visual improvement
@@ -135,7 +135,7 @@ export function useAsync<T>(asyncFn: () => Promise<T>) {
 ### **Low Priority (Future Enhancement)**
 6. **Dark theme** - User preference feature
 
-## 💡 **Benefits**
+## **Benefits**
 
 ✅ **Better UX** - Loading states, search, pagination  
 ✅ **Code Quality** - Reusable components and hooks  
@@ -143,7 +143,7 @@ export function useAsync<T>(asyncFn: () => Promise<T>) {
 ✅ **Accessibility** - Better user interaction  
 ✅ **Maintainability** - Cleaner, more organized code  
 
-## 🔧 **Implementation Notes**
+## **Implementation Notes**
 
 - **All improvements are frontend-only** - No backend changes needed
 - **Use existing Tailwind classes** for consistent styling

@@ -5,7 +5,7 @@ This guide covers deploying your ToneTrace application with:
 - **Backend**: Render (FastAPI)
 - **Frontend**: Vercel (React)
 
-## 🗄️ Neon Database Setup
+## Neon Database Setup
 
 ### 1. Database Connection String
 Your Neon database is already configured with:
@@ -20,7 +20,7 @@ After deploying to Render, run migrations:
 alembic upgrade head
 ```
 
-## 🚀 Render Backend Deployment
+## Render Backend Deployment
 
 ### 1. Environment Variables
 Set these in your Render service settings:
@@ -41,7 +41,7 @@ Your `requirements.txt` is now configured for:
 - All ML libraries (PyTorch, Transformers, etc.)
 - FastAPI and async database support
 
-## 🌐 Vercel Frontend Deployment
+## Vercel Frontend Deployment
 
 ### 1. Environment Variables
 Set in your Vercel project:
@@ -55,7 +55,7 @@ VITE_API_BASE=https://your-render-backend-name.onrender.com
 - **Output Directory**: `dist`
 - **Install Command**: `npm install`
 
-## 🔗 Connecting the Services
+## Connecting the Services
 
 ### 1. Backend to Database
 ✅ **Configured**: Your FastAPI app uses `DATABASE_URL` environment variable
@@ -65,7 +65,7 @@ VITE_API_BASE=https://your-render-backend-name.onrender.com
 ✅ **Configured**: React app uses `VITE_API_BASE` environment variable
 ✅ **CORS**: Backend allows requests from `https://tonetrace.vercel.app`
 
-## 🧪 Testing the Deployment
+## Testing the Deployment
 
 ### 1. Health Check
 ```bash
@@ -84,7 +84,7 @@ curl -X POST https://your-render-backend.onrender.com/analyze \
 ### 3. Frontend Integration
 Visit `https://tonetrace.vercel.app` and test the analysis functionality.
 
-## 🚨 Troubleshooting
+## Troubleshooting
 
 ### Common Issues
 
@@ -107,7 +107,7 @@ Visit `https://tonetrace.vercel.app` and test the analysis functionality.
 - **Vercel**: Monitor build and runtime logs
 - **Neon**: Check database connection metrics
 
-## 📋 Deployment Checklist
+## Deployment Checklist
 
 - [ ] Neon database created and accessible
 - [ ] Render backend deployed with environment variables
@@ -118,7 +118,7 @@ Visit `https://tonetrace.vercel.app` and test the analysis functionality.
 - [ ] Frontend successfully calling backend
 - [ ] Text analysis functionality working
 
-## 🔄 Updates and Maintenance
+## Updates and Maintenance
 
 ### Backend Updates
 1. Push changes to your Git repository

@@ -279,4 +279,4 @@ We welcome contributions from educators, developers, and anyone passionate about
 
 ---
 
-**Built with ❤️ for educators and students everywhere**
+**Built for educators and students everywhere**

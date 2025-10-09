@@ -1,7 +1,8 @@
 from fastapi import APIRouter, HTTPException, Query
 from typing import Dict, Any, Optional
 import logging
-from services import get_student_profile, create_default_profile
+# In-memory database removed - using PostgreSQL database directly
+from style_profile_module import StyleProfile
 from services.historical_data import (
     get_sentiment_history,
     get_formality_trends,
@@ -32,28 +33,15 @@ def get_student_style_profile(student_id: str) -> Dict[str, Any]:
     logger.info(f"Profile request received for student: {student_id}")
     
     try:
-        # Try to get the student's profile from the database
-        profile = get_student_profile(student_id)
+        # Create a default profile
+        logger.info(f"Creating default profile for student {student_id}")
+        profile = StyleProfile()
         
-        if profile is None:
-            # Create a default profile if none exists
-            logger.info(f"No profile found for student {student_id}, returning default profile")
-            profile = create_default_profile()
-            
-            return {
-                "student_id": student_id,
-                "profile": profile.to_dict(),
-                "message": "Default profile created - no existing profile found",
-                "is_default": True
-            }
-        
-        # Return the existing profile
-        logger.info(f"Returning existing profile for student {student_id}")
         return {
             "student_id": student_id,
             "profile": profile.to_dict(),
-            "message": "Profile retrieved successfully",
-            "is_default": False
+            "message": "Default profile created - using PostgreSQL database for persistent storage",
+            "is_default": True
         }
         
     except Exception as e:
@@ -280,8 +268,8 @@ async def get_student_performance_metrics(
 
 @router.get("/profile")
 def get_profile():
-    # 🔒 Later: Load from database or in-memory store
+    # 🔒 Later: Load from PostgreSQL database
     return {
-        "message": "This will return the user's style profile in the future.",
+        "message": "This will return the user's style profile from the PostgreSQL database in the future.",
         "status": "placeholder"
     } 

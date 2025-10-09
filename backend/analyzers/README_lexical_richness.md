@@ -121,6 +121,6 @@ See `examples/lexical_richness_demo.py` for a comprehensive demonstration showin
 
 ---
 
-**Built with ❤️ for educators and students everywhere**
+**Built for educators and students everywhere**
 
 *Helping teachers understand and support student vocabulary growth.* 

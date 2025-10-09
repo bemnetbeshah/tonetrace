@@ -4,7 +4,7 @@
 
 ToneTrace transforms student writing into actionable classroom insights, empowering educators with the visibility they need to support every student's writing journey.
 
-## 🏗️ Project Structure
+## Project Structure
 
 This repository has been reorganized for clarity and maintainability:
 
@@ -44,7 +44,7 @@ tonetrace/
 └── scripts/                # Utility scripts
 ```
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Backend Setup
 
@@ -84,7 +84,7 @@ tonetrace/
 
    The frontend will be available at `http://localhost:5173`
 
-## 📋 Features
+## Features
 
 ### For Teachers
 - **Classroom Dashboard**: KPI cards showing class-wide writing trends
@@ -99,7 +99,7 @@ tonetrace/
 - **Grammar Insights**: Common issue identification and suggestions
 - **Progress Tracking**: Longitudinal growth monitoring
 
-## 🛠️ Technology Stack
+## Technology Stack
 
 ### Backend
 - **FastAPI**: Modern Python web framework
@@ -114,7 +114,7 @@ tonetrace/
 - **Recharts**: Data visualization library
 - **React Router**: Client-side routing
 
-## 📊 API Endpoints
+## API Endpoints
 
 ### Analysis
 - `POST /api/analyze` - Analyze student text
@@ -126,7 +126,7 @@ tonetrace/
 - `GET /api/profile/students/{id}` - Get student details
 - `POST /api/profile/students` - Create student profile
 
-## 🚀 Deployment
+## Deployment
 
 ### Render (Recommended)
 The project is optimized for Render's free tier:
@@ -146,7 +146,7 @@ docker-compose up -d
 ### Manual Deployment
 See `docs/DEPLOYMENT.md` for detailed instructions.
 
-## 🧪 Testing
+## Testing
 
 ### Backend Tests
 ```bash
@@ -160,14 +160,14 @@ cd frontend
 npm test
 ```
 
-## 📚 Documentation
+## Documentation
 
 - **Frontend Guide**: `docs/README_FRONTEND.md`
 - **Deployment Guide**: `docs/DEPLOYMENT.md`
 - **API Documentation**: Available at `/docs` when running the backend
 - **Component Library**: `frontend/src/components/README.md`
 
-## 🤝 Contributing
+## Contributing
 
 1. Fork the repository
 2. Create a feature branch: `git checkout -b feature/amazing-feature`
@@ -175,11 +175,11 @@ npm test
 4. Push to the branch: `git push origin feature/amazing-feature`
 5. Open a Pull Request
 
-## 📄 License
+## License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
 
-## 🆘 Support
+## Support
 
 For questions or issues:
 - Check the documentation in `docs/`
@@ -188,6 +188,6 @@ For questions or issues:
 
 ---
 
-**Built with ❤️ for educators and students everywhere**
+**Built for educators and students everywhere**
 
 *ToneTrace: Empowering teachers with the insights they need to help every student thrive.*
