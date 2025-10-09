@@ -1,9 +1,26 @@
 import React, { useState } from 'react';
 
+// Define the type for analysis results
+interface AnalysisResults {
+  tone?: {
+    bucket: string;
+  };
+  sentiment?: {
+    bucket: string;
+  };
+  formality?: {
+    bucket: string;
+  };
+  readability?: {
+    flesch_kincaid_grade: string | number;
+  };
+  analysis_time_ms?: number;
+}
+
 function TextAnalysis() {
   const [text, setText] = useState('');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [results, setResults] = useState(null);
+  const [results, setResults] = useState<AnalysisResults | null>(null);
 
   const handleAnalyze = async () => {
     if (!text.trim()) {
