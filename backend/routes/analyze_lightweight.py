@@ -94,8 +94,13 @@ async def analyze_text(request: TextAnalysisRequest):
             metadata=metadata
         )
         
+    except HTTPException:
+        # Re-raise HTTP exceptions as-is
+        raise
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Analysis failed: {str(e)}")
+        import traceback
+        error_detail = f"Analysis failed: {str(e)}\n{traceback.format_exc()}"
+        raise HTTPException(status_code=500, detail=error_detail)
 
 @router.post("/analyze/batch")
 async def analyze_batch_texts(requests: List[TextAnalysisRequest]):

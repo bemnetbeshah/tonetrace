@@ -4,8 +4,14 @@ Uses TextBlob and rule-based analysis for tone classification.
 """
 
 from textblob import TextBlob
-from constants import EMOTION_TO_TONE
 from . import create_standard_response
+
+# Import EMOTION_TO_TONE if available (not used in classify_tone_model but needed for map_emotion_to_tone)
+try:
+    from constants import EMOTION_TO_TONE
+except ImportError:
+    # Fallback if constants module is not available
+    EMOTION_TO_TONE = {}
 
 def classify_tone_model(text: str, threshold: float = 0.4, score_diff: float = 0.05) -> dict:
     """

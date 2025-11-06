@@ -1,0 +1,20 @@
+# ToneTrace Backend Requirements for Vercel
+# Lightweight version optimized for serverless functions
+
+fastapi==0.104.1
+uvicorn==0.24.0
+pydantic==2.5.0
+python-multipart==0.0.6
+
+# Lightweight NLP libraries
+nltk==3.8.1
+textblob==0.17.1
+textstat==0.7.3
+wordfreq==3.0.3
+
+# Environment and configuration
+python-dotenv==1.0.0
+
+# HTTP client
+httpx==0.25.2
+

@@ -18,20 +18,34 @@ except ImportError:
         return 0.0  # Return default value if not available
 
 # Download required NLTK data
+# Set NLTK data path to /tmp for serverless environments (Vercel)
+import os
+if os.path.exists('/tmp'):
+    nltk.data.path.append('/tmp')
+
 try:
     nltk.data.find('tokenizers/punkt')
 except LookupError:
-    nltk.download('punkt', quiet=True)
+    try:
+        nltk.download('punkt', quiet=True, download_dir='/tmp' if os.path.exists('/tmp') else None)
+    except Exception:
+        pass  # Continue even if download fails
 
 try:
     nltk.data.find('taggers/averaged_perceptron_tagger')
 except LookupError:
-    nltk.download('averaged_perceptron_tagger', quiet=True)
+    try:
+        nltk.download('averaged_perceptron_tagger', quiet=True, download_dir='/tmp' if os.path.exists('/tmp') else None)
+    except Exception:
+        pass  # Continue even if download fails
 
 try:
     nltk.data.find('corpora/stopwords')
 except LookupError:
-    nltk.download('stopwords', quiet=True)
+    try:
+        nltk.download('stopwords', quiet=True, download_dir='/tmp' if os.path.exists('/tmp') else None)
+    except Exception:
+        pass  # Continue even if download fails
 
 from nltk.tokenize import word_tokenize, sent_tokenize
 from nltk.tag import pos_tag
