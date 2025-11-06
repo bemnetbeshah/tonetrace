@@ -64,8 +64,8 @@ function App() {
             <div className="grid grid-2">
               <div className="card">
                 <h3>About Us</h3>
-                <p>Learn more about our mission, goals, and what drives us to help teachers empower their students.</p>
-                <div className="button-borders-white">
+                <p>We are committed to helping teachers empower their students. Learn more about our mission, goals, and what drives us.</p>
+                <div className="button-borders-white" style={{ marginTop: '1.5rem', display: 'flex', justifyContent: 'center' }}>
                   <button 
                     className="primary-button-white" 
                     onClick={() => setCurrentPage('analyze')}
