@@ -10,8 +10,6 @@ This is the primary entry point for the ToneTrace backend service.
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import os
-from routes.analyze_lightweight import router as analyze_router
-from routes import profile
 
 # Create FastAPI application
 app = FastAPI(
@@ -51,9 +49,22 @@ def health_check():
         "service": "tonetrace-api"
     }
 
-# Include API routers
-app.include_router(analyze_router, prefix="/api", tags=["analysis"])
-app.include_router(profile.router, prefix="/api", tags=["profile"])
+# Include API routers with error handling
+try:
+    from routes.analyze_lightweight import router as analyze_router
+    app.include_router(analyze_router, prefix="/api", tags=["analysis"])
+except Exception as e:
+    # If analyze router fails to import, log but continue
+    import sys
+    print(f"Warning: Failed to import analyze_router: {e}", file=sys.stderr)
+
+try:
+    from routes import profile
+    app.include_router(profile.router, prefix="/api", tags=["profile"])
+except Exception as e:
+    # If profile router fails to import, log but continue
+    import sys
+    print(f"Warning: Failed to import profile router: {e}", file=sys.stderr)
 
 if __name__ == "__main__":
     import uvicorn

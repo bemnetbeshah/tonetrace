@@ -34,7 +34,29 @@ init_error = None
 
 try:
     # Import the FastAPI app from backend
-    from main import app
+    # Wrap in try-except to catch any import errors
+    try:
+        from main import app
+    except Exception as import_error:
+        # If import fails, create a minimal app
+        import sys
+        error_trace = traceback.format_exc()
+        print(f"Failed to import backend/main.py: {import_error}", file=sys.stderr)
+        print(error_trace, file=sys.stderr)
+        sys.stderr.flush()
+        
+        # Create minimal FastAPI app
+        from fastapi import FastAPI
+        error_app = FastAPI()
+        
+        @error_app.api_route("/{path:path}", methods=["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"])
+        async def import_error_handler(request):
+            from fastapi.responses import JSONResponse
+            return JSONResponse(
+                status_code=500,
+                content={"detail": f"Backend import failed: {str(import_error)}\n{error_trace}"}
+            )
+        app = error_app
     
     # Use Mangum to wrap FastAPI for Vercel (AWS Lambda/API Gateway compatible)
     try:
