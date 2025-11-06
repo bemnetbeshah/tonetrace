@@ -1,0 +1,23 @@
+{
+  "version": 2,
+  "buildCommand": "cd frontend && npm run build",
+  "outputDirectory": "frontend/dist",
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "backend/main.py"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "frontend/dist/$1"
+    }
+  ],
+  "env": {
+    "PYTHON_VERSION": "3.11"
+  },
+  "functions": {
+    "backend/main.py": {
+      "maxDuration": 30
+    }
+  }
+}
