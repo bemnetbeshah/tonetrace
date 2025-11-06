@@ -63,14 +63,14 @@ function App() {
 
             <div className="grid grid-2">
               <div className="card">
-                <h3>Quick Start</h3>
-                <p>Click "Text Analysis" in the navigation to start analyzing your text.</p>
+                <h3>About Us</h3>
+                <p>Learn more about our mission, goals, and what drives us to help teachers empower their students.</p>
                 <div className="button-borders-white">
                   <button 
                     className="primary-button-white" 
                     onClick={() => setCurrentPage('analyze')}
                   >
-                    Go to Text Analysis
+                    Our Goals and Motivations
                   </button>
                 </div>
               </div>
