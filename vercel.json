@@ -6,7 +6,7 @@
   "routes": [
     {
       "src": "/api/(.*)",
-      "dest": "backend/main.py"
+      "dest": "/api/main.py"
     },
     {
       "src": "/(.*)",
@@ -17,7 +17,7 @@
     "PYTHON_VERSION": "3.11"
   },
   "functions": {
-    "backend/main.py": {
+    "api/main.py": {
       "maxDuration": 30
     }
   }
