@@ -58,14 +58,6 @@ except Exception as e:
     import sys
     print(f"Warning: Failed to import analyze_router: {e}", file=sys.stderr)
 
-try:
-    from routes import profile
-    app.include_router(profile.router, prefix="/api", tags=["profile"])
-except Exception as e:
-    # If profile router fails to import, log but continue
-    import sys
-    print(f"Warning: Failed to import profile router: {e}", file=sys.stderr)
-
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)

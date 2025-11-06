@@ -7,7 +7,7 @@ optimized for Render's free tier memory constraints.
 
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
-from typing import Dict, Any, List
+from typing import Dict, Any
 import sys
 import os
 
@@ -119,34 +119,3 @@ async def analyze_text(request: TextAnalysisRequest):
         error_detail = f"Analysis failed: {str(e)}\n{traceback.format_exc()}"
         raise HTTPException(status_code=500, detail=error_detail)
 
-@router.post("/analyze/batch")
-async def analyze_batch_texts(requests: List[TextAnalysisRequest]):
-    """
-    Analyze multiple texts in batch.
-    
-    Useful for processing multiple student submissions efficiently.
-    """
-    try:
-        results = []
-        
-        for request in requests:
-            result = await analyze_text(request)
-            results.append(result)
-        
-        return {
-            "results": results,
-            "total_analyzed": len(results),
-            "batch_analysis_version": "lightweight"
-        }
-        
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Batch analysis failed: {str(e)}")
-
-@router.get("/health")
-async def health_check():
-    """Health check endpoint for the analysis service."""
-    return {
-        "status": "healthy",
-        "service": "analysis-lightweight",
-        "version": "1.0.0"
-    }

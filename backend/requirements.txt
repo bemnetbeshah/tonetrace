@@ -12,11 +12,6 @@ textblob==0.17.1
 textstat==0.7.3
 wordfreq==3.0.3
 
-# Database
-sqlalchemy==2.0.23
-alembic==1.12.1
-psycopg2-binary==2.9.9
-
 # Environment and configuration
 python-dotenv==1.0.0
 
