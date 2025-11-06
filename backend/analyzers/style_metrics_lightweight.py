@@ -4,10 +4,10 @@ Uses NLTK and regex for basic text analysis.
 """
 
 import re
-import nltk
 from textstat import flesch_kincaid_grade, gunning_fog
 from . import create_standard_response
 from .readability import analyze_readability
+from .nltk_utils import safe_word_tokenize, safe_sent_tokenize, safe_pos_tag
 
 # Handle dale_chall_score import compatibility
 try:
@@ -17,49 +17,15 @@ except ImportError:
     def dale_chall_score(text):
         return 0.0  # Return default value if not available
 
-# Download required NLTK data
-# Set NLTK data path to /tmp for serverless environments (Vercel)
-import os
-if os.path.exists('/tmp'):
-    nltk.data.path.append('/tmp')
-
-try:
-    nltk.data.find('tokenizers/punkt')
-except LookupError:
-    try:
-        nltk.download('punkt', quiet=True, download_dir='/tmp' if os.path.exists('/tmp') else None)
-    except Exception:
-        pass  # Continue even if download fails
-
-try:
-    nltk.data.find('taggers/averaged_perceptron_tagger')
-except LookupError:
-    try:
-        nltk.download('averaged_perceptron_tagger', quiet=True, download_dir='/tmp' if os.path.exists('/tmp') else None)
-    except Exception:
-        pass  # Continue even if download fails
-
-try:
-    nltk.data.find('corpora/stopwords')
-except LookupError:
-    try:
-        nltk.download('stopwords', quiet=True, download_dir='/tmp' if os.path.exists('/tmp') else None)
-    except Exception:
-        pass  # Continue even if download fails
-
-from nltk.tokenize import word_tokenize, sent_tokenize
-from nltk.tag import pos_tag
-from nltk.corpus import stopwords
-
 def average_sentence_length(text: str) -> float:
     """
     Calculates the average sentence length in words for the input text.
     """
-    sentences = sent_tokenize(text)
+    sentences = safe_sent_tokenize(text)
     if not sentences:
         return 0.0
-    words = word_tokenize(text)
-    return len(words) / len(sentences)
+    words = safe_word_tokenize(text)
+    return len(words) / len(sentences) if sentences else 0.0
 
 def compute_formality(text: str) -> dict:
     """
@@ -115,18 +81,23 @@ def compute_complexity(text: str) -> dict:
     Computes writing complexity metrics using NLTK instead of spaCy.
     Returns a standardized response with score, bucket, raw_emotions, confidence, and details.
     """
-    # Tokenize and tag words
-    words = word_tokenize(text.lower())
-    pos_tags = pos_tag(words)
+    # Tokenize and tag words (with safe fallbacks)
+    words = safe_word_tokenize(text.lower())
+    pos_tags = safe_pos_tag(words)
     
     # Count content words (nouns, verbs, adjectives, adverbs)
+    # Handle case where POS tagging fails (tags will be 'UNKNOWN')
     content_words = 0
+    valid_pos_tags = {'NN', 'NNS', 'NNP', 'NNPS',  # Nouns
+                     'VB', 'VBD', 'VBG', 'VBN', 'VBP', 'VBZ',  # Verbs
+                     'JJ', 'JJR', 'JJS',  # Adjectives
+                     'RB', 'RBR', 'RBS'}  # Adverbs
     for word, pos in pos_tags:
-        if pos in {'NN', 'NNS', 'NNP', 'NNPS',  # Nouns
-                   'VB', 'VBD', 'VBG', 'VBN', 'VBP', 'VBZ',  # Verbs
-                   'JJ', 'JJR', 'JJS',  # Adjectives
-                   'RB', 'RBR', 'RBS'}:  # Adverbs
+        if pos in valid_pos_tags:
             content_words += 1
+        # If POS tagging failed, use simple heuristic: count non-stopwords as content
+        elif pos == 'UNKNOWN' and len(word) > 3:  # Heuristic: longer words likely content
+            content_words += 0.5  # Partial credit when POS unavailable
 
     total_words = len(words)
     lexical_density = round(content_words / total_words, 3) if total_words > 0 else 0

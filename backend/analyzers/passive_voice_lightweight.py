@@ -3,41 +3,16 @@ Lightweight passive voice detector without spaCy dependency.
 Uses NLTK for basic part-of-speech tagging.
 """
 
-import nltk
 import re
 from . import create_standard_response
-
-# Download required NLTK data
-# Set NLTK data path to /tmp for serverless environments (Vercel)
-import os
-if os.path.exists('/tmp'):
-    nltk.data.path.append('/tmp')
-
-try:
-    nltk.data.find('tokenizers/punkt')
-except LookupError:
-    try:
-        nltk.download('punkt', quiet=True, download_dir='/tmp' if os.path.exists('/tmp') else None)
-    except Exception:
-        pass  # Continue even if download fails
-
-try:
-    nltk.data.find('taggers/averaged_perceptron_tagger')
-except LookupError:
-    try:
-        nltk.download('averaged_perceptron_tagger', quiet=True, download_dir='/tmp' if os.path.exists('/tmp') else None)
-    except Exception:
-        pass  # Continue even if download fails
-
-from nltk.tokenize import sent_tokenize, word_tokenize
-from nltk.tag import pos_tag
+from .nltk_utils import safe_sent_tokenize, safe_word_tokenize, safe_pos_tag
 
 def detect_passive_sentences(text: str) -> dict:
     """
     Detects passive voice sentences using NLTK instead of spaCy.
     Returns a standardized response with score, bucket, raw, confidence, and details.
     """
-    sentences = sent_tokenize(text)
+    sentences = safe_sent_tokenize(text)
     passive_sentences = []
     passive_count = 0
     
@@ -100,9 +75,9 @@ def is_passive_sentence(sentence: str) -> bool:
     """
     Determines if a sentence is in passive voice using NLTK.
     """
-    # Tokenize and tag the sentence
-    words = word_tokenize(sentence.lower())
-    pos_tags = pos_tag(words)
+    # Tokenize and tag the sentence (with safe fallbacks)
+    words = safe_word_tokenize(sentence.lower())
+    pos_tags = safe_pos_tag(words)
     
     # Look for passive voice patterns
     # Pattern 1: "be" + past participle

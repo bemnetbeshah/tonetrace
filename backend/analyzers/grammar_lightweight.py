@@ -3,41 +3,16 @@ Lightweight grammar analyzer without spaCy dependency.
 Uses NLTK and regex for basic grammar pattern detection.
 """
 
-import nltk
 import re
 from . import create_standard_response
-
-# Download required NLTK data
-# Set NLTK data path to /tmp for serverless environments (Vercel)
-import os
-if os.path.exists('/tmp'):
-    nltk.data.path.append('/tmp')
-
-try:
-    nltk.data.find('tokenizers/punkt')
-except LookupError:
-    try:
-        nltk.download('punkt', quiet=True, download_dir='/tmp' if os.path.exists('/tmp') else None)
-    except Exception:
-        pass  # Continue even if download fails
-
-try:
-    nltk.data.find('taggers/averaged_perceptron_tagger')
-except LookupError:
-    try:
-        nltk.download('averaged_perceptron_tagger', quiet=True, download_dir='/tmp' if os.path.exists('/tmp') else None)
-    except Exception:
-        pass  # Continue even if download fails
-
-from nltk.tokenize import sent_tokenize, word_tokenize
-from nltk.tag import pos_tag
+from .nltk_utils import safe_sent_tokenize, safe_word_tokenize, safe_pos_tag
 
 def analyze_grammar(text: str) -> dict:
     """
     Analyzes grammar patterns using NLTK instead of spaCy.
     Returns a standardized response with score, bucket, raw, confidence, and details.
     """
-    sentences = sent_tokenize(text)
+    sentences = safe_sent_tokenize(text)
     total_sentences = len(sentences)
     
     grammar_issues = []
@@ -121,7 +96,7 @@ def detect_double_negatives(sentence: str) -> bool:
     Detects double negatives in a sentence.
     """
     negative_words = ['not', 'no', 'never', 'none', 'nothing', 'nowhere', 'nobody', 'neither', 'nor']
-    words = word_tokenize(sentence.lower())
+    words = safe_word_tokenize(sentence.lower())
     
     negative_count = sum(1 for word in words if word in negative_words)
     return negative_count > 1
@@ -130,8 +105,8 @@ def detect_subject_verb_disagreement(sentence: str) -> bool:
     """
     Detects basic subject-verb disagreement.
     """
-    words = word_tokenize(sentence.lower())
-    pos_tags = pos_tag(words)
+    words = safe_word_tokenize(sentence.lower())
+    pos_tags = safe_pos_tag(words)
     
     # Look for simple patterns like "they is" or "he are"
     for i, (word, pos) in enumerate(pos_tags):
@@ -152,7 +127,7 @@ def detect_run_on_sentence(sentence: str) -> bool:
     """
     # Count coordinating conjunctions
     conjunctions = ['and', 'but', 'or', 'so', 'yet', 'for', 'nor']
-    words = word_tokenize(sentence.lower())
+    words = safe_word_tokenize(sentence.lower())
     
     conjunction_count = sum(1 for word in words if word in conjunctions)
     
@@ -163,8 +138,8 @@ def detect_fragment(sentence: str) -> bool:
     """
     Detects sentence fragments.
     """
-    words = word_tokenize(sentence)
-    pos_tags = pos_tag(words)
+    words = safe_word_tokenize(sentence)
+    pos_tags = safe_pos_tag(words)
     
     # Check if sentence has a verb
     has_verb = any(pos in ['VB', 'VBD', 'VBG', 'VBN', 'VBP', 'VBZ'] for word, pos in pos_tags)

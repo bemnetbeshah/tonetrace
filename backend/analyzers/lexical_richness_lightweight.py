@@ -3,37 +3,9 @@ Lightweight lexical richness analyzer without spaCy dependency.
 Uses NLTK and wordfreq for vocabulary analysis.
 """
 
-import nltk
 from wordfreq import zipf_frequency
 from . import create_standard_response
-
-# Download required NLTK data
-# Set NLTK data path to /tmp for serverless environments (Vercel)
-import os
-if os.path.exists('/tmp'):
-    nltk.data.path.append('/tmp')
-
-try:
-    nltk.data.find('tokenizers/punkt')
-except LookupError:
-    try:
-        nltk.download('punkt', quiet=True, download_dir='/tmp' if os.path.exists('/tmp') else None)
-    except Exception:
-        pass  # Continue even if download fails
-
-try:
-    nltk.data.find('corpora/stopwords')
-except LookupError:
-    try:
-        nltk.download('stopwords', quiet=True, download_dir='/tmp' if os.path.exists('/tmp') else None)
-    except Exception:
-        pass  # Continue even if download fails
-
-from nltk.tokenize import word_tokenize
-from nltk.corpus import stopwords
-
-# Get English stopwords
-stop_words = set(stopwords.words('english'))
+from .nltk_utils import safe_word_tokenize, get_stopwords
 
 def analyze_lexical_richness(text: str) -> dict:
     """
@@ -47,8 +19,11 @@ def analyze_lexical_richness(text: str) -> dict:
     - num_advanced_words: How many rare words were used
     - total_tokens: Vocabulary sample size
     """
+    # Get stopwords (with fallback if NLTK unavailable)
+    stop_words = get_stopwords()
+    
     # Tokenize text and filter for alpha tokens, excluding stop words
-    tokens = word_tokenize(text.lower())
+    tokens = safe_word_tokenize(text.lower())
     tokens = [token for token in tokens if token.isalpha() and token not in stop_words]
 
     if not tokens:
