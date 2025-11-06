@@ -12,7 +12,6 @@ from services.historical_data import (
     get_tone_distribution_over_time,
     get_performance_metrics
 )
-from style_profile_module import StyleProfile
 
 # Configure logging
 logger = logging.getLogger(__name__)
