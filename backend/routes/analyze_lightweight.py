@@ -14,11 +14,11 @@ import os
 # Add the backend directory to the Python path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from analyzers.style_metrics_lightweight import analyze_formality_lightweight, analyze_complexity_lightweight
-from analyzers.lexical_richness_lightweight import analyze_lexical_richness_lightweight
-from analyzers.tone_lightweight import analyze_tone_lightweight
-from analyzers.passive_voice_lightweight import analyze_passive_voice_lightweight
-from analyzers.grammar_lightweight import analyze_grammar_lightweight
+from analyzers.style_metrics_lightweight import compute_formality, compute_complexity
+from analyzers.lexical_richness_lightweight import analyze_lexical_richness
+from analyzers.tone_lightweight import classify_tone_model
+from analyzers.passive_voice_lightweight import detect_passive_sentences
+from analyzers.grammar_lightweight import analyze_grammar
 from analyzers.readability import analyze_readability
 from analyzers.sentiment import analyze_sentiment
 
@@ -58,20 +58,20 @@ async def analyze_text(request: TextAnalysisRequest):
         analysis = {}
         
         # Style metrics
-        analysis['formality'] = analyze_formality_lightweight(text)
-        analysis['complexity'] = analyze_complexity_lightweight(text)
+        analysis['formality'] = compute_formality(text)
+        analysis['complexity'] = compute_complexity(text)
         
         # Lexical richness
-        analysis['lexical_richness'] = analyze_lexical_richness_lightweight(text)
+        analysis['lexical_richness'] = analyze_lexical_richness(text)
         
         # Tone analysis
-        analysis['tone'] = analyze_tone_lightweight(text)
+        analysis['tone'] = classify_tone_model(text)
         
         # Passive voice
-        analysis['passive_voice'] = analyze_passive_voice_lightweight(text)
+        analysis['passive_voice'] = detect_passive_sentences(text)
         
         # Grammar analysis
-        analysis['grammar'] = analyze_grammar_lightweight(text)
+        analysis['grammar'] = analyze_grammar(text)
         
         # Readability
         analysis['readability'] = analyze_readability(text)
