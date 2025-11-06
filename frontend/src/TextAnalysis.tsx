@@ -30,8 +30,7 @@ function TextAnalysis() {
 
     setIsAnalyzing(true);
     try {
-      // TODO: Replace with actual API call
-      const response = await fetch('/api/v1/analyze', {
+      const response = await fetch('/api/analyze', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -44,9 +43,23 @@ function TextAnalysis() {
 
       if (response.ok) {
         const data = await response.json();
-        setResults(data);
+        // Backend returns { text, analysis: {...}, metadata: {...} }
+        // Extract the analysis results and flatten for the frontend
+        const analysisResults = data.analysis || {};
+        setResults({
+          tone: analysisResults.tone,
+          sentiment: analysisResults.sentiment,
+          formality: analysisResults.formality,
+          // Readability analyzer returns { score, bucket, raw: { flesch_kincaid_grade }, ... }
+          // Extract flesch_kincaid_grade from raw or use score (which is the FK grade)
+          readability: analysisResults.readability ? {
+            flesch_kincaid_grade: analysisResults.readability.raw?.flesch_kincaid_grade ?? analysisResults.readability.score
+          } : undefined,
+          analysis_time_ms: data.metadata?.analysis_time_ms
+        });
       } else {
-        throw new Error('Analysis failed');
+        const errorData = await response.json().catch(() => ({ detail: 'Analysis failed' }));
+        throw new Error(errorData.detail || 'Analysis failed');
       }
     } catch (error) {
       console.error('Error analyzing text:', error);
