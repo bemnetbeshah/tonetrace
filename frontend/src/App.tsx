@@ -65,13 +65,15 @@ function App() {
               <div className="card">
                 <h3>About Us</h3>
                 <p>We are committed to helping teachers empower their students. Learn more about our mission, goals, and what drives us.</p>
-                <div className="button-borders-white" style={{ marginTop: '1.5rem', display: 'flex', justifyContent: 'center' }}>
-                  <button 
-                    className="primary-button-white" 
-                    onClick={() => setCurrentPage('analyze')}
-                  >
-                    Our Goals and Motivations
-                  </button>
+                <div style={{ marginTop: '1.5rem', display: 'flex', justifyContent: 'center' }}>
+                  <div className="button-borders-white">
+                    <button 
+                      className="primary-button-white" 
+                      onClick={() => setCurrentPage('analyze')}
+                    >
+                      Our Goals and Motivations
+                    </button>
+                  </div>
                 </div>
               </div>
 
