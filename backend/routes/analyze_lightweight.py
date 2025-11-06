@@ -14,13 +14,27 @@ import os
 # Add the backend directory to the Python path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from analyzers.style_metrics_lightweight import compute_formality, compute_complexity
-from analyzers.lexical_richness_lightweight import analyze_lexical_richness
-from analyzers.tone_lightweight import classify_tone_model
-from analyzers.passive_voice_lightweight import detect_passive_sentences
-from analyzers.grammar_lightweight import analyze_grammar
-from analyzers.readability import analyze_readability
-from analyzers.sentiment import analyze_sentiment
+# Lazy imports to prevent initialization crashes
+# Import analyzers only when needed, not at module load time
+def _get_analyzers():
+    """Lazy import analyzers to avoid initialization crashes"""
+    from analyzers.style_metrics_lightweight import compute_formality, compute_complexity
+    from analyzers.lexical_richness_lightweight import analyze_lexical_richness
+    from analyzers.tone_lightweight import classify_tone_model
+    from analyzers.passive_voice_lightweight import detect_passive_sentences
+    from analyzers.grammar_lightweight import analyze_grammar
+    from analyzers.readability import analyze_readability
+    from analyzers.sentiment import analyze_sentiment
+    return {
+        'compute_formality': compute_formality,
+        'compute_complexity': compute_complexity,
+        'analyze_lexical_richness': analyze_lexical_richness,
+        'classify_tone_model': classify_tone_model,
+        'detect_passive_sentences': detect_passive_sentences,
+        'analyze_grammar': analyze_grammar,
+        'analyze_readability': analyze_readability,
+        'analyze_sentiment': analyze_sentiment
+    }
 
 router = APIRouter()
 
@@ -54,30 +68,33 @@ async def analyze_text(request: TextAnalysisRequest):
         if not text:
             raise HTTPException(status_code=400, detail="Text cannot be empty")
         
+        # Lazy load analyzers (only when endpoint is called)
+        analyzers = _get_analyzers()
+        
         # Perform lightweight analysis
         analysis = {}
         
         # Style metrics
-        analysis['formality'] = compute_formality(text)
-        analysis['complexity'] = compute_complexity(text)
+        analysis['formality'] = analyzers['compute_formality'](text)
+        analysis['complexity'] = analyzers['compute_complexity'](text)
         
         # Lexical richness
-        analysis['lexical_richness'] = analyze_lexical_richness(text)
+        analysis['lexical_richness'] = analyzers['analyze_lexical_richness'](text)
         
         # Tone analysis
-        analysis['tone'] = classify_tone_model(text)
+        analysis['tone'] = analyzers['classify_tone_model'](text)
         
         # Passive voice
-        analysis['passive_voice'] = detect_passive_sentences(text)
+        analysis['passive_voice'] = analyzers['detect_passive_sentences'](text)
         
         # Grammar analysis
-        analysis['grammar'] = analyze_grammar(text)
+        analysis['grammar'] = analyzers['analyze_grammar'](text)
         
         # Readability
-        analysis['readability'] = analyze_readability(text)
+        analysis['readability'] = analyzers['analyze_readability'](text)
         
         # Sentiment
-        analysis['sentiment'] = analyze_sentiment(text)
+        analysis['sentiment'] = analyzers['analyze_sentiment'](text)
         
         # Metadata
         metadata = {

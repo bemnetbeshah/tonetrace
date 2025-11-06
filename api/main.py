@@ -8,7 +8,9 @@ from the backend directory as a Vercel serverless function.
 import sys
 import os
 import traceback
-import json
+
+# Suppress NLTK download messages and handle errors gracefully
+os.environ['NLTK_DATA'] = '/tmp/nltk_data' if os.path.exists('/tmp') else os.path.expanduser('~/nltk_data')
 
 # Add the project root and backend directory to the Python path
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
@@ -26,6 +28,10 @@ try:
 except Exception:
     pass  # If chdir fails, continue anyway
 
+# Wrap all imports in try-except to prevent crashes
+handler = None
+init_error = None
+
 try:
     # Import the FastAPI app from backend
     from main import app
@@ -36,30 +42,52 @@ try:
         handler = Mangum(app, lifespan="off")
     except ImportError:
         # If Mangum is not available, use the app directly
-        # Vercel should handle ASGI apps natively
         handler = app
         
 except Exception as e:
-    # If there's an import error, log it and create a simple error handler
-    error_msg = f"Initialization error: {str(e)}\n{traceback.format_exc()}"
-    print(error_msg, file=sys.stderr)
+    # Store the error for debugging
+    init_error = f"Initialization error: {str(e)}\n{traceback.format_exc()}"
     
-    # Create a simple FastAPI app that returns the error
-    from fastapi import FastAPI, Request
-    from fastapi.responses import JSONResponse
+    # Write error to stderr so it appears in Vercel logs
+    print(init_error, file=sys.stderr)
+    sys.stderr.flush()
     
-    error_app = FastAPI()
-    
-    @error_app.api_route("/{path:path}", methods=["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"])
-    async def error_handler(request: Request, path: str = ""):
-        return JSONResponse(
-            status_code=500,
-            content={"detail": error_msg}
-        )
-    
+    # Create a minimal error handler that will work even if FastAPI import fails
     try:
-        from mangum import Mangum
-        handler = Mangum(error_app, lifespan="off")
-    except ImportError:
-        handler = error_app
+        from fastapi import FastAPI, Request
+        from fastapi.responses import JSONResponse
+        
+        error_app = FastAPI()
+        
+        @error_app.api_route("/{path:path}", methods=["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"])
+        async def error_handler(request: Request, path: str = ""):
+            return JSONResponse(
+                status_code=500,
+                content={"detail": init_error}
+            )
+        
+        try:
+            from mangum import Mangum
+            handler = Mangum(error_app, lifespan="off")
+        except ImportError:
+            handler = error_app
+    except Exception as e2:
+        # If even FastAPI import fails, create a minimal handler
+        def minimal_handler(event, context=None):
+            return {
+                "statusCode": 500,
+                "headers": {"Content-Type": "application/json"},
+                "body": f'{{"detail": "{init_error}"}}'
+            }
+        handler = minimal_handler
+
+# Ensure handler is defined
+if handler is None:
+    def fallback_handler(event, context=None):
+        return {
+            "statusCode": 500,
+            "headers": {"Content-Type": "application/json"},
+            "body": '{"detail": "Handler initialization failed"}'
+        }
+    handler = fallback_handler
 
