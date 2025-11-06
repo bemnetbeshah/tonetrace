@@ -58,8 +58,19 @@ function TextAnalysis() {
           analysis_time_ms: data.metadata?.analysis_time_ms
         });
       } else {
-        const errorData = await response.json().catch(() => ({ detail: 'Analysis failed' }));
-        throw new Error(errorData.detail || 'Analysis failed');
+        // Get error details from response
+        let errorMessage = 'Analysis failed';
+        try {
+          const errorData = await response.json();
+          errorMessage = errorData.detail || errorData.message || errorMessage;
+          console.error('API Error Details:', errorData);
+        } catch (e) {
+          console.error('Failed to parse error response:', e);
+          errorMessage = `HTTP ${response.status}: ${response.statusText}`;
+        }
+        console.error('Full error:', errorMessage);
+        alert(`Failed to analyze text: ${errorMessage}`);
+        throw new Error(errorMessage);
       }
     } catch (error) {
       console.error('Error analyzing text:', error);

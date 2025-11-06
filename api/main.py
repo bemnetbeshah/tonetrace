@@ -22,7 +22,11 @@ os.chdir(backend_dir)
 # Import the FastAPI app from backend
 from main import app
 
-# Export the app for Vercel
-# Vercel expects the handler to be named 'handler' or the app itself
-handler = app
+# Use Mangum to wrap FastAPI for Vercel (AWS Lambda/API Gateway compatible)
+try:
+    from mangum import Mangum
+    handler = Mangum(app, lifespan="off")
+except ImportError:
+    # Fallback: try direct app export (may work for some Vercel configurations)
+    handler = app
 
