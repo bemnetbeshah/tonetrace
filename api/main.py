@@ -5,34 +5,39 @@ This file serves as a wrapper to expose the FastAPI application
 from the backend directory as a Vercel serverless function.
 """
 
+# Import basic modules first
 import sys
 import os
-import traceback
 
 # Suppress NLTK download messages and handle errors gracefully
-os.environ['NLTK_DATA'] = '/tmp/nltk_data' if os.path.exists('/tmp') else os.path.expanduser('~/nltk_data')
-
-# Add the project root and backend directory to the Python path
-project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-backend_dir = os.path.join(project_root, 'backend')
-
-# Add both to sys.path so imports work correctly
-if project_root not in sys.path:
-    sys.path.insert(0, project_root)
-if backend_dir not in sys.path:
-    sys.path.insert(0, backend_dir)
-
-# Change to backend directory context for relative imports
 try:
-    os.chdir(backend_dir)
+    os.environ['NLTK_DATA'] = '/tmp/nltk_data' if os.path.exists('/tmp') else os.path.expanduser('~/nltk_data')
 except Exception:
-    pass  # If chdir fails, continue anyway
+    pass
 
-# Wrap all imports in try-except to prevent crashes
+# Wrap everything in try-except to prevent any crashes
 handler = None
 init_error = None
 
 try:
+    import traceback
+    
+    # Add the project root and backend directory to the Python path
+    project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+    backend_dir = os.path.join(project_root, 'backend')
+    
+    # Add both to sys.path so imports work correctly
+    if project_root not in sys.path:
+        sys.path.insert(0, project_root)
+    if backend_dir not in sys.path:
+        sys.path.insert(0, backend_dir)
+    
+    # Change to backend directory context for relative imports
+    try:
+        os.chdir(backend_dir)
+    except Exception:
+        pass  # If chdir fails, continue anyway
+    
     # Import the FastAPI app from backend
     # Wrap in try-except to catch any import errors
     try:
