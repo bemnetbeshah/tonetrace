@@ -7,7 +7,7 @@
 }
 
 body {
-  font-family: 'Brush Script MT', cursive;
+  font-family: 'Courier New', monospace;
   line-height: 1.6;
   color: #f1f1f1;
   background-color: #000;
@@ -113,7 +113,7 @@ body::-webkit-scrollbar { display: none; }
 
 /* Custom Button Styles from Uiverse.io */
 .primary-button {
-  font-family: 'Brush Script MT', cursive;
+  font-family: 'Courier New', monospace;
   color: white;
   cursor: pointer;
   font-size: 13px;
@@ -199,7 +199,7 @@ body::-webkit-scrollbar { display: none; }
 
 /* White complementary button */
 .primary-button-white {
-  font-family: 'Brush Script MT', cursive;
+  font-family: 'Courier New', monospace;
   color: #000000;
   cursor: pointer;
   font-size: 13px;
