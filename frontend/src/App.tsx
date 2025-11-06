@@ -36,7 +36,7 @@ function App() {
             <div className="grid grid-2">
               <div className="card">
                 <h2 className="text-large">Welcome to ToneTrace!</h2>
-                <p>Empower teachers to provide targeted writing feedback with AI-powered analysis of tone, sentiment, grammar, readability, and style metrics.</p>
+                <p>Empower teachers to provide targeted writing feedback with AI-powered analysis of their students' writing.</p>
               </div>
               <div className="card text-center">
                 <h2 className="text-large">Test our current analyzers manually</h2>
