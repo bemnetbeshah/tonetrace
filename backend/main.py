@@ -62,7 +62,7 @@ app.add_middleware(
     allow_headers=['*']
 )
 
-@app.get("/")
+@app.get("/api")
 def read_root():
     """Root endpoint providing API information."""
     return {
@@ -72,7 +72,7 @@ def read_root():
         "description": "Educational writing analysis API for teachers"
     }
 
-@app.get("/health")
+@app.get("/api/health")
 def health_check():
     """Health check endpoint for monitoring."""
     return {

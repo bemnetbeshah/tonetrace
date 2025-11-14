@@ -248,3 +248,40 @@ if handler is None:
         }
     handler = fallback_handler
 
+# Wrap the handler to catch and return errors in the response
+# This ensures we can see errors even if logs aren't captured
+_original_handler = handler
+
+def wrapped_handler(event, context=None):
+    try:
+        # Log that handler was called
+        print("=== HANDLER CALLED ===", flush=True)
+        print(f"Event keys: {list(event.keys()) if isinstance(event, dict) else type(event)}", flush=True)
+        
+        # Call the original handler
+        result = _original_handler(event, context)
+        print("=== HANDLER SUCCESS ===", flush=True)
+        return result
+    except Exception as e:
+        # Return error in response so we can see it
+        error_msg = f"Handler Error: {type(e).__name__}: {str(e)}"
+        error_trace = traceback.format_exc()
+        
+        print(f"=== HANDLER ERROR ===", file=sys.stderr, flush=True)
+        print(error_msg, file=sys.stderr, flush=True)
+        print(error_trace, file=sys.stderr, flush=True)
+        
+        # Return error in response body
+        import json
+        return {
+            "statusCode": 500,
+            "headers": {"Content-Type": "application/json"},
+            "body": json.dumps({
+                "error": error_msg,
+                "traceback": error_trace,
+                "message": "Check the response body for error details"
+            }, indent=2)
+        }
+
+handler = wrapped_handler
+
