@@ -7,6 +7,8 @@ export default defineConfig({
   server: {
     port: 5173,
     open: true,
+    // Proxy for local development only
+    // In production, frontend calls Render backend directly via VITE_API_URL
     proxy: {
       '/api': {
         target: 'http://localhost:8000',

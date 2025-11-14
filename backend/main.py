@@ -65,7 +65,10 @@ app = FastAPI(
 )
 
 # Configure CORS
-origins = os.getenv('ALLOWED_ORIGINS', 'http://localhost:5173,https://tonetrace.vercel.app').split(',')
+# Allow requests from Vercel frontend and local development
+# Set ALLOWED_ORIGINS environment variable in Render with your Vercel frontend URL
+# Example: ALLOWED_ORIGINS=https://tonetrace.vercel.app,http://localhost:5173
+origins = [origin.strip() for origin in os.getenv('ALLOWED_ORIGINS', 'http://localhost:5173,https://tonetrace.vercel.app').split(',')]
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,

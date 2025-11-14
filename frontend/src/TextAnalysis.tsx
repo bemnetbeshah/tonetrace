@@ -52,9 +52,11 @@ function TextAnalysis() {
 
     setIsAnalyzing(true);
     try {
-      // Use environment variable for API URL, fallback to relative path for local dev
-      const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || '';
-      const apiUrl = `${apiBaseUrl}/api/analyze`;
+      // Use environment variable for API URL (Render backend)
+      // For local dev, vite.config.ts proxy handles /api requests
+      // For production, VITE_API_URL should point to Render backend
+      const apiBaseUrl = import.meta.env.VITE_API_URL || '';
+      const apiUrl = apiBaseUrl ? `${apiBaseUrl}/api/analyze` : '/api/analyze';
       
       const response = await fetch(apiUrl, {
         method: 'POST',
