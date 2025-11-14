@@ -181,8 +181,9 @@ try:
     
     try:
         from mangum import Mangum
-        handler = Mangum(app, lifespan="off")
-        print("[INFO] Successfully created Mangum handler", flush=True)
+        # Configure base path to handle /api prefix from Vercel routing
+        handler = Mangum(app, lifespan="off", api_gateway_base_path="/api")
+        print("[INFO] Successfully created Mangum handler with base path /api", flush=True)
     except ImportError as e:
         # If Mangum is not available, use the app directly
         print(f"[WARNING] Mangum not available, using app directly: {e}", file=sys.stderr, flush=True)
@@ -220,7 +221,8 @@ except Exception as e:
         
         try:
             from mangum import Mangum
-            handler = Mangum(error_app, lifespan="off")
+            # Configure base path to handle /api prefix from Vercel routing
+            handler = Mangum(error_app, lifespan="off", api_gateway_base_path="/api")
         except ImportError:
             handler = error_app
     except Exception as e2:
