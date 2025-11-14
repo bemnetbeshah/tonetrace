@@ -3,13 +3,15 @@ Vercel Serverless Function Wrapper for ToneTrace API
 
 This file serves as a wrapper to expose the FastAPI application
 from the backend directory as a Vercel serverless function.
+
+Vercel supports ASGI applications directly, so we can use FastAPI
+without Mangum.
 """
 
 # Import basic modules first - these should always work
 import sys
 import os
 import traceback
-import asyncio
 
 # Simple logging functions - Vercel captures print() statements
 # Use print() for info, print(..., file=sys.stderr) for errors
@@ -50,7 +52,7 @@ except Exception as e:
     log_error("Could not set NLTK_DATA path", error=e)
 
 # Wrap everything in try-except to prevent any crashes
-handler = None
+app = None
 init_error = None
 
 try:
@@ -176,20 +178,7 @@ try:
             )
         app = error_app
     
-    # Use Mangum to wrap FastAPI for Vercel (AWS Lambda/API Gateway compatible)
-    print("[INFO] Step 3: Wrapping app with Mangum", flush=True)
-    
-    try:
-        from mangum import Mangum
-        # Configure base path to handle /api prefix from Vercel routing
-        handler = Mangum(app, lifespan="off", api_gateway_base_path="/api")
-        print("[INFO] Successfully created Mangum handler with base path /api", flush=True)
-    except ImportError as e:
-        # If Mangum is not available, use the app directly
-        print(f"[WARNING] Mangum not available, using app directly: {e}", file=sys.stderr, flush=True)
-        handler = app
-    
-    print("[INFO] INITIALIZATION COMPLETE - HANDLER READY", flush=True)
+    print("[INFO] INITIALIZATION COMPLETE - ASGI APP READY", flush=True)
         
 except Exception as e:
     # Store the error for debugging
@@ -219,114 +208,35 @@ except Exception as e:
                 }
             )
         
-        try:
-            from mangum import Mangum
-            # Configure base path to handle /api prefix from Vercel routing
-            handler = Mangum(error_app, lifespan="off", api_gateway_base_path="/api")
-        except ImportError:
-            handler = error_app
+        app = error_app
     except Exception as e2:
-        # If even FastAPI import fails, create a minimal handler
-        def minimal_handler(event, context=None):
-            import json
-            error_detail = init_error.replace('"', '\\"').replace('\n', '\\n').replace('\r', '\\r')
-            try:
-                error_body = json.dumps({"detail": init_error})
-            except Exception:
-                error_body = '{"detail": "Initialization failed - check logs"}'
-            return {
-                "statusCode": 500,
-                "headers": {"Content-Type": "application/json"},
-                "body": error_body
+        # If even FastAPI import fails, we can't create an ASGI app
+        # Vercel will handle this error
+        log_error("CRITICAL: Cannot create FastAPI app", error=e2)
+        app = None
+
+# Vercel expects the handler to be the ASGI application directly
+# FastAPI apps are ASGI callables, so we can export it directly
+# However, Vercel may need a wrapper function, so we'll provide both
+
+if app is None:
+    # Fallback: create a minimal ASGI app that returns errors
+    from fastapi import FastAPI, Request
+    from fastapi.responses import JSONResponse
+    
+    app = FastAPI()
+    
+    @app.api_route("/{path:path}", methods=["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"])
+    async def fallback_handler(request: Request, path: str = ""):
+        return JSONResponse(
+            status_code=500,
+            content={
+                "detail": "Handler initialization failed",
+                "path": path
             }
-        handler = minimal_handler
+        )
 
-# Ensure handler is defined
-if handler is None:
-    def fallback_handler(event, context=None):
-        return {
-            "statusCode": 500,
-            "headers": {"Content-Type": "application/json"},
-            "body": '{"detail": "Handler initialization failed"}'
-        }
-    handler = fallback_handler
-
-# Wrap the handler to catch and return errors in the response
-# This ensures we can see errors even if logs aren't captured
-_original_handler = handler
-
-async def _async_handler(event, context=None):
-    """Internal async handler that processes the request"""
-    try:
-        # Log that handler was called
-        print("=== HANDLER CALLED ===", flush=True)
-        print(f"Event keys: {list(event.keys()) if isinstance(event, dict) else type(event)}", flush=True)
-        if isinstance(event, dict) and 'path' in event:
-            print(f"Request path: {event.get('path', 'N/A')}", flush=True)
-        if isinstance(event, dict) and 'rawPath' in event:
-            print(f"Request rawPath: {event.get('rawPath', 'N/A')}", flush=True)
-        
-        # Call the original handler - Mangum returns a coroutine that must be awaited
-        # Handle both sync and async handlers by checking the result
-        import inspect
-        result = _original_handler(event, context)
-        
-        # If the result is a coroutine, await it (Mangum handlers return coroutines)
-        if inspect.iscoroutine(result):
-            result = await result
-        
-        print("=== HANDLER SUCCESS ===", flush=True)
-        return result
-    except Exception as e:
-        # Return error in response so we can see it
-        error_msg = f"Handler Error: {type(e).__name__}: {str(e)}"
-        error_trace = traceback.format_exc()
-        
-        print(f"=== HANDLER ERROR ===", file=sys.stderr, flush=True)
-        print(error_msg, file=sys.stderr, flush=True)
-        print(error_trace, file=sys.stderr, flush=True)
-        
-        # Return error in response body
-        import json
-        return {
-            "statusCode": 500,
-            "headers": {"Content-Type": "application/json"},
-            "body": json.dumps({
-                "error": error_msg,
-                "traceback": error_trace,
-                "message": "Check the response body for error details"
-            }, indent=2)
-        }
-
-def wrapped_handler(event, context=None):
-    """
-    Synchronous wrapper for async handler.
-    Vercel Python functions expect a synchronous handler,
-    so we use asyncio.run() to execute the async handler.
-    """
-    try:
-        # Use asyncio.run() which creates a new event loop and runs the coroutine
-        # This is the recommended way for Python 3.7+
-        return asyncio.run(_async_handler(event, context))
-    except Exception as e:
-        # Fallback error handling if asyncio setup fails
-        error_msg = f"Handler Wrapper Error: {type(e).__name__}: {str(e)}"
-        error_trace = traceback.format_exc()
-        
-        print(f"=== HANDLER WRAPPER ERROR ===", file=sys.stderr, flush=True)
-        print(error_msg, file=sys.stderr, flush=True)
-        print(error_trace, file=sys.stderr, flush=True)
-        
-        import json
-        return {
-            "statusCode": 500,
-            "headers": {"Content-Type": "application/json"},
-            "body": json.dumps({
-                "error": error_msg,
-                "traceback": error_trace,
-                "message": "Handler wrapper failed - check logs"
-            }, indent=2)
-        }
-
-handler = wrapped_handler
-
+# Export the ASGI application
+# Vercel supports ASGI applications directly, so we can export the app
+# The handler variable name is what Vercel looks for
+handler = app
