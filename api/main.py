@@ -9,40 +9,31 @@ from the backend directory as a Vercel serverless function.
 import sys
 import os
 import traceback
-import json
 
-# Configure logging for Vercel
-# Vercel captures both stdout and stderr from serverless functions
-# Use print() to stdout for normal logs, stderr for errors
-# Flush immediately to ensure logs appear in real-time
-
+# Simple logging functions - Vercel captures print() statements
+# Use print() for info, print(..., file=sys.stderr) for errors
 def log_info(message, **kwargs):
-    """Log info message to stdout (captured by Vercel)"""
-    try:
-        log_data = {"level": "info", "message": message, **kwargs}
-        print(json.dumps(log_data), flush=True)
-    except Exception:
-        # Fallback to simple print if JSON serialization fails
-        print(f"[INFO] {message}", flush=True)
+    """Log info message - Vercel captures print() to stdout"""
+    extra = f" {kwargs}" if kwargs else ""
+    print(f"[INFO] {message}{extra}", flush=True)
 
-def log_error(message, error=None, level="error", **kwargs):
-    """Log error/warning message to stderr (captured by Vercel)"""
-    try:
-        log_data = {"level": level, "message": message, **kwargs}
-        if error:
-            log_data["error_type"] = type(error).__name__
-            log_data["error_message"] = str(error)
-            log_data["traceback"] = traceback.format_exc()
-        print(json.dumps(log_data), file=sys.stderr, flush=True)
-    except Exception:
-        # Fallback to simple print if JSON serialization fails
-        error_msg = f"[{level.upper()}] {message}"
-        if error:
-            error_msg += f": {str(error)}"
-        print(error_msg, file=sys.stderr, flush=True)
+def log_error(message, error=None, **kwargs):
+    """Log error message - Vercel captures print() to stderr"""
+    error_msg = f"[ERROR] {message}"
+    if kwargs:
+        error_msg += f" {kwargs}"
+    if error:
+        error_msg += f"\nError Type: {type(error).__name__}"
+        error_msg += f"\nError Message: {str(error)}"
+        error_msg += f"\nTraceback:\n{traceback.format_exc()}"
+    print(error_msg, file=sys.stderr, flush=True)
 
-# Log startup - Vercel will capture this
-log_info("Starting Vercel function initialization")
+# Immediate logging to ensure we capture startup
+print("=== VERCEL FUNCTION STARTING ===", flush=True)
+print(f"Python version: {sys.version}", flush=True)
+print(f"Python executable: {sys.executable}", flush=True)
+print(f"Current directory: {os.getcwd()}", flush=True)
+print(f"Script location: {__file__}", flush=True)
 
 # Set up NLTK data path BEFORE any imports that might use NLTK
 # This is critical for serverless environments
@@ -185,18 +176,18 @@ try:
         app = error_app
     
     # Use Mangum to wrap FastAPI for Vercel (AWS Lambda/API Gateway compatible)
-    log_info("Step 3: Wrapping app with Mangum")
+    print("[INFO] Step 3: Wrapping app with Mangum", flush=True)
     
     try:
         from mangum import Mangum
         handler = Mangum(app, lifespan="off")
-        log_info("Successfully created Mangum handler")
-    except ImportError:
+        print("[INFO] Successfully created Mangum handler", flush=True)
+    except ImportError as e:
         # If Mangum is not available, use the app directly
-        log_error("Mangum not available, using app directly", level="warning")
+        print(f"[WARNING] Mangum not available, using app directly: {e}", file=sys.stderr, flush=True)
         handler = app
     
-    log_info("INITIALIZATION COMPLETE - HANDLER READY")
+    print("[INFO] INITIALIZATION COMPLETE - HANDLER READY", flush=True)
         
 except Exception as e:
     # Store the error for debugging
