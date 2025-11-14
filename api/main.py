@@ -5,10 +5,19 @@ This file serves as a wrapper to expose the FastAPI application
 from the backend directory as a Vercel serverless function.
 """
 
-# Import basic modules first
+# Import basic modules first - these should always work
 import sys
 import os
 import traceback
+
+# Force stderr to be unbuffered so errors appear immediately in Vercel logs
+sys.stderr.reconfigure(line_buffering=True) if hasattr(sys.stderr, 'reconfigure') else None
+
+# Log startup
+print("=" * 80, file=sys.stderr)
+print("STARTING VERCEL FUNCTION INITIALIZATION", file=sys.stderr)
+print("=" * 80, file=sys.stderr)
+sys.stderr.flush()
 
 # Set up NLTK data path BEFORE any imports that might use NLTK
 # This is critical for serverless environments
@@ -28,9 +37,17 @@ handler = None
 init_error = None
 
 try:
+    print("Step 1: Setting up paths...", file=sys.stderr)
+    sys.stderr.flush()
+    
     # Add the project root and backend directory to the Python path
     project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
     backend_dir = os.path.join(project_root, 'backend')
+    
+    print(f"  Project root: {project_root}", file=sys.stderr)
+    print(f"  Backend dir: {backend_dir}", file=sys.stderr)
+    print(f"  Backend dir exists: {os.path.exists(backend_dir)}", file=sys.stderr)
+    sys.stderr.flush()
     
     # Add both to sys.path so imports work correctly
     if project_root not in sys.path:
@@ -41,13 +58,20 @@ try:
     # Change to backend directory context for relative imports
     try:
         os.chdir(backend_dir)
-    except Exception:
-        pass  # If chdir fails, continue anyway
+        print(f"  Changed to: {os.getcwd()}", file=sys.stderr)
+    except Exception as chdir_err:
+        print(f"  Warning: Could not chdir: {chdir_err}", file=sys.stderr)
+    sys.stderr.flush()
     
     # Import the FastAPI app from backend
     # Wrap in try-except to catch any import errors
+    print("Step 2: Importing backend/main.py...", file=sys.stderr)
+    sys.stderr.flush()
+    
     try:
         from main import app
+        print("  Successfully imported app", file=sys.stderr)
+        sys.stderr.flush()
         
         # Add a debug endpoint to help troubleshoot
         # Define it after app is imported to avoid import-time issues
@@ -114,9 +138,16 @@ try:
         error_trace = traceback.format_exc()
         error_msg = f"Failed to import backend/main.py: {str(import_error)}"
         
-        # Write to stderr (appears in Vercel logs)
-        print(f"ERROR: {error_msg}", file=sys.stderr)
-        print(f"TRACEBACK:\n{error_trace}", file=sys.stderr)
+        # Write to stderr (appears in Vercel logs) - be very explicit
+        print("=" * 80, file=sys.stderr)
+        print("IMPORT ERROR DETECTED", file=sys.stderr)
+        print("=" * 80, file=sys.stderr)
+        print(f"ERROR TYPE: {type(import_error).__name__}", file=sys.stderr)
+        print(f"ERROR MESSAGE: {error_msg}", file=sys.stderr)
+        print("=" * 80, file=sys.stderr)
+        print("FULL TRACEBACK:", file=sys.stderr)
+        print(error_trace, file=sys.stderr)
+        print("=" * 80, file=sys.stderr)
         sys.stderr.flush()
         
         # Create minimal FastAPI app
@@ -139,19 +170,38 @@ try:
         app = error_app
     
     # Use Mangum to wrap FastAPI for Vercel (AWS Lambda/API Gateway compatible)
+    print("Step 3: Wrapping app with Mangum...", file=sys.stderr)
+    sys.stderr.flush()
+    
     try:
         from mangum import Mangum
         handler = Mangum(app, lifespan="off")
+        print("  Successfully created Mangum handler", file=sys.stderr)
     except ImportError:
         # If Mangum is not available, use the app directly
+        print("  Warning: Mangum not available, using app directly", file=sys.stderr)
         handler = app
+    sys.stderr.flush()
+    
+    print("=" * 80, file=sys.stderr)
+    print("INITIALIZATION COMPLETE - HANDLER READY", file=sys.stderr)
+    print("=" * 80, file=sys.stderr)
+    sys.stderr.flush()
         
 except Exception as e:
     # Store the error for debugging
     init_error = f"Initialization error: {str(e)}\n{traceback.format_exc()}"
     
-    # Write error to stderr so it appears in Vercel logs
-    print(f"CRITICAL ERROR: {init_error}", file=sys.stderr)
+    # Write error to stderr so it appears in Vercel logs - be very explicit
+    print("=" * 80, file=sys.stderr)
+    print("CRITICAL INITIALIZATION ERROR", file=sys.stderr)
+    print("=" * 80, file=sys.stderr)
+    print(f"ERROR TYPE: {type(e).__name__}", file=sys.stderr)
+    print(f"ERROR MESSAGE: {str(e)}", file=sys.stderr)
+    print("=" * 80, file=sys.stderr)
+    print("FULL TRACEBACK:", file=sys.stderr)
+    print(traceback.format_exc(), file=sys.stderr)
+    print("=" * 80, file=sys.stderr)
     sys.stderr.flush()
     
     # Create a minimal error handler that will work even if FastAPI import fails
