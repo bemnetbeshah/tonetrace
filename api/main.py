@@ -50,55 +50,64 @@ try:
         from main import app
         
         # Add a debug endpoint to help troubleshoot
-        @app.get("/api/debug")
-        async def debug_endpoint():
-            """Debug endpoint to check system status"""
-            import nltk
-            import importlib
-            
-            debug_info = {
-                "status": "ok",
-                "python_version": sys.version,
-                "nltk_data_path": os.environ.get('NLTK_DATA', 'not set'),
-                "nltk_data_dirs": nltk.data.path,
-                "sys_path": sys.path[:5],  # First 5 entries
-                "cwd": os.getcwd(),
-                "tmp_exists": os.path.exists('/tmp'),
-            }
-            
-            # Check NLTK resources
-            nltk_resources = {}
-            for resource in ['punkt', 'stopwords', 'averaged_perceptron_tagger']:
+        # Define it after app is imported to avoid import-time issues
+        try:
+            @app.get("/api/debug")
+            async def debug_endpoint():
+                """Debug endpoint to check system status"""
                 try:
-                    if resource == 'punkt':
-                        nltk.data.find('tokenizers/punkt')
-                    elif resource == 'stopwords':
-                        nltk.data.find('corpora/stopwords')
-                    elif resource == 'averaged_perceptron_tagger':
-                        nltk.data.find('taggers/averaged_perceptron_tagger')
-                    nltk_resources[resource] = "available"
-                except LookupError:
-                    nltk_resources[resource] = "not found"
+                    import nltk
+                except ImportError:
+                    nltk = None
+                
+                debug_info = {
+                    "status": "ok",
+                    "python_version": sys.version,
+                    "nltk_data_path": os.environ.get('NLTK_DATA', 'not set'),
+                    "sys_path": sys.path[:5],  # First 5 entries
+                    "cwd": os.getcwd(),
+                    "tmp_exists": os.path.exists('/tmp'),
+                }
+                
+                # Check NLTK resources if NLTK is available
+                if nltk:
+                    debug_info["nltk_data_dirs"] = nltk.data.path
+                    nltk_resources = {}
+                    for resource in ['punkt', 'stopwords', 'averaged_perceptron_tagger']:
+                        try:
+                            if resource == 'punkt':
+                                nltk.data.find('tokenizers/punkt')
+                            elif resource == 'stopwords':
+                                nltk.data.find('corpora/stopwords')
+                            elif resource == 'averaged_perceptron_tagger':
+                                nltk.data.find('taggers/averaged_perceptron_tagger')
+                            nltk_resources[resource] = "available"
+                        except LookupError:
+                            nltk_resources[resource] = "not found"
+                        except Exception as e:
+                            nltk_resources[resource] = f"error: {str(e)}"
+                    debug_info["nltk_resources"] = nltk_resources
+                else:
+                    debug_info["nltk"] = "not available"
+                
+                # Check if analyzers can be imported
+                analyzer_status = {}
+                try:
+                    from routes.analyze_lightweight import _get_analyzers
+                    analyzers = _get_analyzers()
+                    import_errors = analyzers.pop('_import_errors', {})
+                    analyzer_status["loaded_count"] = len(analyzers)
+                    analyzer_status["import_errors"] = {k: v.get('error_message', str(v)) for k, v in import_errors.items()}
                 except Exception as e:
-                    nltk_resources[resource] = f"error: {str(e)}"
-            
-            debug_info["nltk_resources"] = nltk_resources
-            
-            # Check if analyzers can be imported
-            analyzer_status = {}
-            try:
-                from routes.analyze_lightweight import _get_analyzers
-                analyzers = _get_analyzers()
-                import_errors = analyzers.pop('_import_errors', {})
-                analyzer_status["loaded_count"] = len(analyzers)
-                analyzer_status["import_errors"] = {k: v.get('error_message', str(v)) for k, v in import_errors.items()}
-            except Exception as e:
-                analyzer_status["error"] = str(e)
-                analyzer_status["traceback"] = traceback.format_exc()
-            
-            debug_info["analyzers"] = analyzer_status
-            
-            return debug_info
+                    analyzer_status["error"] = str(e)
+                    analyzer_status["traceback"] = traceback.format_exc()
+                
+                debug_info["analyzers"] = analyzer_status
+                
+                return debug_info
+        except Exception as debug_error:
+            # If debug endpoint fails to register, log but continue
+            print(f"Warning: Could not register debug endpoint: {debug_error}", file=sys.stderr)
         
     except Exception as import_error:
         # If import fails, create a minimal app with detailed error
@@ -171,11 +180,16 @@ except Exception as e:
     except Exception as e2:
         # If even FastAPI import fails, create a minimal handler
         def minimal_handler(event, context=None):
-            error_detail = init_error.replace('"', '\\"').replace('\n', '\\n')
+            import json
+            error_detail = init_error.replace('"', '\\"').replace('\n', '\\n').replace('\r', '\\r')
+            try:
+                error_body = json.dumps({"detail": init_error})
+            except Exception:
+                error_body = '{"detail": "Initialization failed - check logs"}'
             return {
                 "statusCode": 500,
                 "headers": {"Content-Type": "application/json"},
-                "body": f'{{"detail": "{error_detail}"}}'
+                "body": error_body
             }
         handler = minimal_handler
 

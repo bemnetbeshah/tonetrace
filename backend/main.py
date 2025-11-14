@@ -14,10 +14,31 @@ import sys
 
 # Set up NLTK path early, before any analyzer imports
 # This ensures NLTK data can be found in serverless environments
+# Use a try-except to prevent crashes if NLTK setup fails
 try:
-    # Import nltk_utils early to set up NLTK data path
-    from analyzers.nltk_utils import setup_nltk_path
-    setup_nltk_path()
+    # Set NLTK data path directly without importing analyzers
+    # This avoids potential circular import issues
+    if os.path.exists('/tmp'):
+        nltk_data_dir = '/tmp/nltk_data'
+        try:
+            os.makedirs(nltk_data_dir, exist_ok=True)
+        except Exception:
+            pass
+        os.environ['NLTK_DATA'] = nltk_data_dir
+    
+    # Try to import and set up NLTK path if possible
+    try:
+        import nltk
+        if '/tmp/nltk_data' not in nltk.data.path:
+            nltk.data.path.insert(0, '/tmp/nltk_data')
+        if '/tmp' not in nltk.data.path:
+            nltk.data.path.append('/tmp')
+    except ImportError:
+        # NLTK not available, that's okay - fallbacks will handle it
+        pass
+    except Exception as e:
+        # Log but continue - fallbacks will handle missing NLTK data
+        print(f"Warning: Could not set up NLTK path: {e}", file=sys.stderr)
 except Exception as e:
     # Log but continue - fallbacks will handle missing NLTK data
     print(f"Warning: Could not set up NLTK path: {e}", file=sys.stderr)
