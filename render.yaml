@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: tonetrace-backend
+    env: python
+    region: oregon
+    plan: free
+    buildCommand: pip install -r backend/requirements.txt
+    startCommand: cd backend && uvicorn main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+      - key: ALLOWED_ORIGINS
+        value: https://tonetrace.vercel.app,http://localhost:5173
+

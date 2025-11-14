@@ -52,7 +52,11 @@ function TextAnalysis() {
 
     setIsAnalyzing(true);
     try {
-      const response = await fetch('/api/analyze', {
+      // Use environment variable for API URL, fallback to relative path for local dev
+      const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || '';
+      const apiUrl = `${apiBaseUrl}/api/analyze`;
+      
+      const response = await fetch(apiUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
