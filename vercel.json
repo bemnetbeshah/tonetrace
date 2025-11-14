@@ -3,9 +3,6 @@
   "installCommand": "cd frontend && npm install",
   "buildCommand": "cd frontend && npm run build",
   "outputDirectory": "frontend/dist",
-  "observability": {
-    "enabled": true
-  },
   "routes": [
     {
       "src": "/api/(.*)",
