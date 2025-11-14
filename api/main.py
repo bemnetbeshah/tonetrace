@@ -9,15 +9,40 @@ from the backend directory as a Vercel serverless function.
 import sys
 import os
 import traceback
+import json
 
-# Force stderr to be unbuffered so errors appear immediately in Vercel logs
-sys.stderr.reconfigure(line_buffering=True) if hasattr(sys.stderr, 'reconfigure') else None
+# Configure logging for Vercel
+# Vercel captures both stdout and stderr from serverless functions
+# Use print() to stdout for normal logs, stderr for errors
+# Flush immediately to ensure logs appear in real-time
 
-# Log startup
-print("=" * 80, file=sys.stderr)
-print("STARTING VERCEL FUNCTION INITIALIZATION", file=sys.stderr)
-print("=" * 80, file=sys.stderr)
-sys.stderr.flush()
+def log_info(message, **kwargs):
+    """Log info message to stdout (captured by Vercel)"""
+    try:
+        log_data = {"level": "info", "message": message, **kwargs}
+        print(json.dumps(log_data), flush=True)
+    except Exception:
+        # Fallback to simple print if JSON serialization fails
+        print(f"[INFO] {message}", flush=True)
+
+def log_error(message, error=None, level="error", **kwargs):
+    """Log error/warning message to stderr (captured by Vercel)"""
+    try:
+        log_data = {"level": level, "message": message, **kwargs}
+        if error:
+            log_data["error_type"] = type(error).__name__
+            log_data["error_message"] = str(error)
+            log_data["traceback"] = traceback.format_exc()
+        print(json.dumps(log_data), file=sys.stderr, flush=True)
+    except Exception:
+        # Fallback to simple print if JSON serialization fails
+        error_msg = f"[{level.upper()}] {message}"
+        if error:
+            error_msg += f": {str(error)}"
+        print(error_msg, file=sys.stderr, flush=True)
+
+# Log startup - Vercel will capture this
+log_info("Starting Vercel function initialization")
 
 # Set up NLTK data path BEFORE any imports that might use NLTK
 # This is critical for serverless environments
@@ -30,24 +55,23 @@ try:
         os.environ['NLTK_DATA'] = os.path.expanduser('~/nltk_data')
 except Exception as e:
     # Log but continue - fallbacks will handle missing NLTK data
-    print(f"Warning: Could not set NLTK_DATA path: {e}", file=sys.stderr)
+    log_error("Could not set NLTK_DATA path", error=e)
 
 # Wrap everything in try-except to prevent any crashes
 handler = None
 init_error = None
 
 try:
-    print("Step 1: Setting up paths...", file=sys.stderr)
-    sys.stderr.flush()
+    log_info("Step 1: Setting up paths")
     
     # Add the project root and backend directory to the Python path
     project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
     backend_dir = os.path.join(project_root, 'backend')
     
-    print(f"  Project root: {project_root}", file=sys.stderr)
-    print(f"  Backend dir: {backend_dir}", file=sys.stderr)
-    print(f"  Backend dir exists: {os.path.exists(backend_dir)}", file=sys.stderr)
-    sys.stderr.flush()
+    log_info("Path configuration", 
+             project_root=project_root,
+             backend_dir=backend_dir,
+             backend_dir_exists=os.path.exists(backend_dir))
     
     # Add both to sys.path so imports work correctly
     if project_root not in sys.path:
@@ -58,20 +82,17 @@ try:
     # Change to backend directory context for relative imports
     try:
         os.chdir(backend_dir)
-        print(f"  Changed to: {os.getcwd()}", file=sys.stderr)
+        log_info("Changed working directory", cwd=os.getcwd())
     except Exception as chdir_err:
-        print(f"  Warning: Could not chdir: {chdir_err}", file=sys.stderr)
-    sys.stderr.flush()
+        log_error("Could not change directory", error=chdir_err)
     
     # Import the FastAPI app from backend
     # Wrap in try-except to catch any import errors
-    print("Step 2: Importing backend/main.py...", file=sys.stderr)
-    sys.stderr.flush()
+    log_info("Step 2: Importing backend/main.py")
     
     try:
         from main import app
-        print("  Successfully imported app", file=sys.stderr)
-        sys.stderr.flush()
+        log_info("Successfully imported FastAPI app")
         
         # Add a debug endpoint to help troubleshoot
         # Define it after app is imported to avoid import-time issues
@@ -131,24 +152,18 @@ try:
                 return debug_info
         except Exception as debug_error:
             # If debug endpoint fails to register, log but continue
-            print(f"Warning: Could not register debug endpoint: {debug_error}", file=sys.stderr)
+            log_error("Could not register debug endpoint", error=debug_error)
         
     except Exception as import_error:
         # If import fails, create a minimal app with detailed error
         error_trace = traceback.format_exc()
         error_msg = f"Failed to import backend/main.py: {str(import_error)}"
         
-        # Write to stderr (appears in Vercel logs) - be very explicit
-        print("=" * 80, file=sys.stderr)
-        print("IMPORT ERROR DETECTED", file=sys.stderr)
-        print("=" * 80, file=sys.stderr)
-        print(f"ERROR TYPE: {type(import_error).__name__}", file=sys.stderr)
-        print(f"ERROR MESSAGE: {error_msg}", file=sys.stderr)
-        print("=" * 80, file=sys.stderr)
-        print("FULL TRACEBACK:", file=sys.stderr)
-        print(error_trace, file=sys.stderr)
-        print("=" * 80, file=sys.stderr)
-        sys.stderr.flush()
+        # Log detailed error - Vercel will capture this
+        log_error("IMPORT ERROR DETECTED", 
+                 error=import_error,
+                 step="import_backend_main",
+                 traceback=error_trace)
         
         # Create minimal FastAPI app
         from fastapi import FastAPI, Request
@@ -170,39 +185,28 @@ try:
         app = error_app
     
     # Use Mangum to wrap FastAPI for Vercel (AWS Lambda/API Gateway compatible)
-    print("Step 3: Wrapping app with Mangum...", file=sys.stderr)
-    sys.stderr.flush()
+    log_info("Step 3: Wrapping app with Mangum")
     
     try:
         from mangum import Mangum
         handler = Mangum(app, lifespan="off")
-        print("  Successfully created Mangum handler", file=sys.stderr)
+        log_info("Successfully created Mangum handler")
     except ImportError:
         # If Mangum is not available, use the app directly
-        print("  Warning: Mangum not available, using app directly", file=sys.stderr)
+        log_error("Mangum not available, using app directly", level="warning")
         handler = app
-    sys.stderr.flush()
     
-    print("=" * 80, file=sys.stderr)
-    print("INITIALIZATION COMPLETE - HANDLER READY", file=sys.stderr)
-    print("=" * 80, file=sys.stderr)
-    sys.stderr.flush()
+    log_info("INITIALIZATION COMPLETE - HANDLER READY")
         
 except Exception as e:
     # Store the error for debugging
     init_error = f"Initialization error: {str(e)}\n{traceback.format_exc()}"
     
-    # Write error to stderr so it appears in Vercel logs - be very explicit
-    print("=" * 80, file=sys.stderr)
-    print("CRITICAL INITIALIZATION ERROR", file=sys.stderr)
-    print("=" * 80, file=sys.stderr)
-    print(f"ERROR TYPE: {type(e).__name__}", file=sys.stderr)
-    print(f"ERROR MESSAGE: {str(e)}", file=sys.stderr)
-    print("=" * 80, file=sys.stderr)
-    print("FULL TRACEBACK:", file=sys.stderr)
-    print(traceback.format_exc(), file=sys.stderr)
-    print("=" * 80, file=sys.stderr)
-    sys.stderr.flush()
+    # Log critical error - Vercel will capture this
+    log_error("CRITICAL INITIALIZATION ERROR",
+             error=e,
+             step="initialization",
+             traceback=traceback.format_exc())
     
     # Create a minimal error handler that will work even if FastAPI import fails
     try:
