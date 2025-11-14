@@ -9,6 +9,7 @@ from the backend directory as a Vercel serverless function.
 import sys
 import os
 import traceback
+import asyncio
 
 # Simple logging functions - Vercel captures print() statements
 # Use print() for info, print(..., file=sys.stderr) for errors
@@ -252,14 +253,26 @@ if handler is None:
 # This ensures we can see errors even if logs aren't captured
 _original_handler = handler
 
-def wrapped_handler(event, context=None):
+async def _async_handler(event, context=None):
+    """Internal async handler that processes the request"""
     try:
         # Log that handler was called
         print("=== HANDLER CALLED ===", flush=True)
         print(f"Event keys: {list(event.keys()) if isinstance(event, dict) else type(event)}", flush=True)
+        if isinstance(event, dict) and 'path' in event:
+            print(f"Request path: {event.get('path', 'N/A')}", flush=True)
+        if isinstance(event, dict) and 'rawPath' in event:
+            print(f"Request rawPath: {event.get('rawPath', 'N/A')}", flush=True)
         
-        # Call the original handler
+        # Call the original handler - Mangum returns a coroutine that must be awaited
+        # Handle both sync and async handlers by checking the result
+        import inspect
         result = _original_handler(event, context)
+        
+        # If the result is a coroutine, await it (Mangum handlers return coroutines)
+        if inspect.iscoroutine(result):
+            result = await result
+        
         print("=== HANDLER SUCCESS ===", flush=True)
         return result
     except Exception as e:
@@ -280,6 +293,36 @@ def wrapped_handler(event, context=None):
                 "error": error_msg,
                 "traceback": error_trace,
                 "message": "Check the response body for error details"
+            }, indent=2)
+        }
+
+def wrapped_handler(event, context=None):
+    """
+    Synchronous wrapper for async handler.
+    Vercel Python functions expect a synchronous handler,
+    so we use asyncio.run() to execute the async handler.
+    """
+    try:
+        # Use asyncio.run() which creates a new event loop and runs the coroutine
+        # This is the recommended way for Python 3.7+
+        return asyncio.run(_async_handler(event, context))
+    except Exception as e:
+        # Fallback error handling if asyncio setup fails
+        error_msg = f"Handler Wrapper Error: {type(e).__name__}: {str(e)}"
+        error_trace = traceback.format_exc()
+        
+        print(f"=== HANDLER WRAPPER ERROR ===", file=sys.stderr, flush=True)
+        print(error_msg, file=sys.stderr, flush=True)
+        print(error_trace, file=sys.stderr, flush=True)
+        
+        import json
+        return {
+            "statusCode": 500,
+            "headers": {"Content-Type": "application/json"},
+            "body": json.dumps({
+                "error": error_msg,
+                "traceback": error_trace,
+                "message": "Handler wrapper failed - check logs"
             }, indent=2)
         }
 
