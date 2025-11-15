@@ -8,20 +8,26 @@ from the backend directory as a Vercel serverless function.
 # Import basic modules first
 import sys
 import os
+import traceback
 
-# Suppress NLTK download messages and handle errors gracefully
+# Set up NLTK data path BEFORE any imports that might use NLTK
+# This is critical for serverless environments
 try:
-    os.environ['NLTK_DATA'] = '/tmp/nltk_data' if os.path.exists('/tmp') else os.path.expanduser('~/nltk_data')
-except Exception:
-    pass
+    if os.path.exists('/tmp'):
+        nltk_data_dir = '/tmp/nltk_data'
+        os.makedirs(nltk_data_dir, exist_ok=True)
+        os.environ['NLTK_DATA'] = nltk_data_dir
+    else:
+        os.environ['NLTK_DATA'] = os.path.expanduser('~/nltk_data')
+except Exception as e:
+    # Log but continue - fallbacks will handle missing NLTK data
+    print(f"Warning: Could not set NLTK_DATA path: {e}", file=sys.stderr)
 
 # Wrap everything in try-except to prevent any crashes
 handler = None
 init_error = None
 
 try:
-    import traceback
-    
     # Add the project root and backend directory to the Python path
     project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
     backend_dir = os.path.join(project_root, 'backend')
@@ -42,24 +48,84 @@ try:
     # Wrap in try-except to catch any import errors
     try:
         from main import app
+        
+        # Add a debug endpoint to help troubleshoot
+        @app.get("/api/debug")
+        async def debug_endpoint():
+            """Debug endpoint to check system status"""
+            import nltk
+            import importlib
+            
+            debug_info = {
+                "status": "ok",
+                "python_version": sys.version,
+                "nltk_data_path": os.environ.get('NLTK_DATA', 'not set'),
+                "nltk_data_dirs": nltk.data.path,
+                "sys_path": sys.path[:5],  # First 5 entries
+                "cwd": os.getcwd(),
+                "tmp_exists": os.path.exists('/tmp'),
+            }
+            
+            # Check NLTK resources
+            nltk_resources = {}
+            for resource in ['punkt', 'stopwords', 'averaged_perceptron_tagger']:
+                try:
+                    if resource == 'punkt':
+                        nltk.data.find('tokenizers/punkt')
+                    elif resource == 'stopwords':
+                        nltk.data.find('corpora/stopwords')
+                    elif resource == 'averaged_perceptron_tagger':
+                        nltk.data.find('taggers/averaged_perceptron_tagger')
+                    nltk_resources[resource] = "available"
+                except LookupError:
+                    nltk_resources[resource] = "not found"
+                except Exception as e:
+                    nltk_resources[resource] = f"error: {str(e)}"
+            
+            debug_info["nltk_resources"] = nltk_resources
+            
+            # Check if analyzers can be imported
+            analyzer_status = {}
+            try:
+                from routes.analyze_lightweight import _get_analyzers
+                analyzers = _get_analyzers()
+                import_errors = analyzers.pop('_import_errors', {})
+                analyzer_status["loaded_count"] = len(analyzers)
+                analyzer_status["import_errors"] = {k: v.get('error_message', str(v)) for k, v in import_errors.items()}
+            except Exception as e:
+                analyzer_status["error"] = str(e)
+                analyzer_status["traceback"] = traceback.format_exc()
+            
+            debug_info["analyzers"] = analyzer_status
+            
+            return debug_info
+        
     except Exception as import_error:
-        # If import fails, create a minimal app
-        import sys
+        # If import fails, create a minimal app with detailed error
         error_trace = traceback.format_exc()
-        print(f"Failed to import backend/main.py: {import_error}", file=sys.stderr)
-        print(error_trace, file=sys.stderr)
+        error_msg = f"Failed to import backend/main.py: {str(import_error)}"
+        
+        # Write to stderr (appears in Vercel logs)
+        print(f"ERROR: {error_msg}", file=sys.stderr)
+        print(f"TRACEBACK:\n{error_trace}", file=sys.stderr)
         sys.stderr.flush()
         
         # Create minimal FastAPI app
-        from fastapi import FastAPI
+        from fastapi import FastAPI, Request
+        from fastapi.responses import JSONResponse
+        
         error_app = FastAPI()
         
         @error_app.api_route("/{path:path}", methods=["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"])
-        async def import_error_handler(request):
-            from fastapi.responses import JSONResponse
+        async def import_error_handler(request: Request, path: str = ""):
             return JSONResponse(
                 status_code=500,
-                content={"detail": f"Backend import failed: {str(import_error)}\n{error_trace}"}
+                content={
+                    "detail": error_msg,
+                    "error_type": type(import_error).__name__,
+                    "traceback": error_trace,
+                    "path": path
+                }
             )
         app = error_app
     
@@ -76,7 +142,7 @@ except Exception as e:
     init_error = f"Initialization error: {str(e)}\n{traceback.format_exc()}"
     
     # Write error to stderr so it appears in Vercel logs
-    print(init_error, file=sys.stderr)
+    print(f"CRITICAL ERROR: {init_error}", file=sys.stderr)
     sys.stderr.flush()
     
     # Create a minimal error handler that will work even if FastAPI import fails
@@ -90,7 +156,11 @@ except Exception as e:
         async def error_handler(request: Request, path: str = ""):
             return JSONResponse(
                 status_code=500,
-                content={"detail": init_error}
+                content={
+                    "detail": init_error,
+                    "error_type": type(e).__name__,
+                    "path": path
+                }
             )
         
         try:
@@ -101,10 +171,11 @@ except Exception as e:
     except Exception as e2:
         # If even FastAPI import fails, create a minimal handler
         def minimal_handler(event, context=None):
+            error_detail = init_error.replace('"', '\\"').replace('\n', '\\n')
             return {
                 "statusCode": 500,
                 "headers": {"Content-Type": "application/json"},
-                "body": f'{{"detail": "{init_error}"}}'
+                "body": f'{{"detail": "{error_detail}"}}'
             }
         handler = minimal_handler
 

@@ -10,6 +10,17 @@ This is the primary entry point for the ToneTrace backend service.
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import os
+import sys
+
+# Set up NLTK path early, before any analyzer imports
+# This ensures NLTK data can be found in serverless environments
+try:
+    # Import nltk_utils early to set up NLTK data path
+    from analyzers.nltk_utils import setup_nltk_path
+    setup_nltk_path()
+except Exception as e:
+    # Log but continue - fallbacks will handle missing NLTK data
+    print(f"Warning: Could not set up NLTK path: {e}", file=sys.stderr)
 
 # Create FastAPI application
 app = FastAPI(
